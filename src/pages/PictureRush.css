@@ -74,11 +74,10 @@
 .pr-logo-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 54px; line-height: 1; letter-spacing: 0.02em; }
 .pr-logo-sub { font-weight: 700; font-size: 26px; color: var(--gold); margin-top: 4px; }
 
-.pr-rounds { position: absolute; left: 50%; top: 48px; transform: translateX(-50%); display: flex; gap: 16px; }
-.pr-round { width: 56px; height: 20px; background: #3a342b; }
+.pr-rounds { position: absolute; left: 50%; top: 52px; transform: translateX(-50%); display: flex; gap: 10px; }
+.pr-round { width: 32px; height: 20px; background: #3a342b; }
 .pr-round-now { background: var(--cream); animation: pr-blink 1.2s steps(2) infinite; }
-.pr-round-win { background: var(--gold); }
-.pr-round-miss { background: var(--red); }
+.pr-round-done { background: var(--gold); }
 @keyframes pr-blink { 50% { opacity: 0.45; } }
 
 .pr-hud-right { display: flex; align-items: center; gap: 24px; }

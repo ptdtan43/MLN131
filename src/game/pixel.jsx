@@ -19,6 +19,8 @@ const PALETTE = {
   N: '#5f3a1d',
   s: '#a39b8d',
   S: '#625d53',
+  m: '#e8789a',
+  M: '#b84a6c',
 }
 
 const SIZE = 16
@@ -174,6 +176,173 @@ const BUILDERS = {
     })
     ;[[9, 1], [10, 1], [9, 2]].forEach(([x, y]) => {
       g[y][x] = 'y'
+    })
+    return g
+  },
+  // Mặt trời
+  sun() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (!inCircle(x, y, 8, 8, 4.4)) return null
+      if (x + y < 14) return 'p'
+      if (x + y > 18) return 'Y'
+      return 'y'
+    })
+    const rays = [[0, -6.2], [0, 6.2], [-6.2, 0], [6.2, 0], [-4.5, -4.5], [4.5, -4.5], [-4.5, 4.5], [4.5, 4.5]]
+    rays.forEach(([dx, dy]) => {
+      const cx = Math.floor(8 + dx)
+      const cy = Math.floor(8 + dy)
+      ;[[0, 0], [1, 0], [0, 1], [1, 1]].forEach(([a, b]) => {
+        const x = cx + a - (dx > 0 ? 0 : 0)
+        const y = cy + b
+        if (x >= 1 && x <= 14 && y >= 1 && y <= 14 && g[y][x] === '.') g[y][x] = 'o'
+      })
+    })
+    return g
+  },
+  // Núi
+  mountain() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (inPolygon(x, y, [[6.4, 3], [0.8, 14.2], [12, 14.2]])) {
+        if (y < 6.2) return 'w'
+        return x > 6.6 ? 'N' : 'n'
+      }
+      if (inPolygon(x, y, [[11.6, 6.4], [7.2, 14.2], [15.4, 14.2]])) {
+        if (y < 8.2) return 's'
+        return x > 11.8 ? 'S' : 's'
+      }
+      return null
+    })
+    return g
+  },
+  // Sông
+  river() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (y < 1 || y > 14.6) return null
+      const cx = 8 + 3 * Math.sin(y * 0.6)
+      const d = Math.abs(x - cx)
+      if (d < 2.6) return (Math.floor(y) + Math.floor(x)) % 3 === 0 ? 'B' : 'b'
+      return x < cx ? 'g' : 'G'
+    })
+    return g
+  },
+  // Quả bóng (bóng rổ)
+  ball() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (!inCircle(x, y, 8, 8, 6.4)) return null
+      return x > 9 && y > 9 && x + y > 19.4 ? 'n' : 'o'
+    })
+    paint(g, (x, y) => {
+      if (!inCircle(x, y, 8, 8, 6.4)) return null
+      const vertical = Math.abs(x - 7.5) < 0.3
+      const horizontal = Math.abs(y - 7.5) < 0.3
+      const left = Math.abs(Math.hypot(x - 0.6, y - 8) - 5.6) < 0.5
+      const right = Math.abs(Math.hypot(x - 15.4, y - 8) - 5.6) < 0.5
+      return vertical || horizontal || left || right ? 'N' : null
+    })
+    ;[[5, 4], [6, 4], [4, 5], [5, 5]].forEach(([x, y]) => {
+      if (g[y][x] === 'o') g[y][x] = 'y'
+    })
+    return g
+  },
+  // Bóng đèn
+  bulb() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (inCircle(x, y, 8, 6.4, 4.8)) return x + y < 12.5 ? 'w' : 'p'
+      if (inPolygon(x, y, [[5.2, 9.2], [10.8, 9.2], [9.6, 11.6], [6.4, 11.6]])) return 'p'
+      if (inRect(x, y, 6, 11.6, 10, 14)) return Math.floor(y) % 2 === 0 ? 's' : 'S'
+      return null
+    })
+    ;[[7, 5], [8, 5], [9, 5], [7, 6], [9, 6], [8, 7]].forEach(([x, y]) => {
+      g[y][x] = 'y'
+    })
+    return g
+  },
+  // Nón lá
+  hat() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (!inPolygon(x, y, [[8, 2.4], [0.8, 12.2], [15.2, 12.2]])) return null
+      if (Math.floor(y) % 2 === 1) return 'y'
+      return x > 8.4 ? 'Y' : 'p'
+    })
+    ;[[4, 12], [4, 13], [12, 12], [12, 13]].forEach(([x, y]) => {
+      g[y][x] = 'r'
+    })
+    return g
+  },
+  // Chiếc lá
+  leaf() {
+    const g = blank()
+    const rot = (x, y) => {
+      const a = (35 * Math.PI) / 180
+      const dx = x - 8
+      const dy = y - 8
+      return [dx * Math.cos(a) + dy * Math.sin(a), -dx * Math.sin(a) + dy * Math.cos(a)]
+    }
+    paint(g, (x, y) => {
+      const [u, v] = rot(x, y)
+      if ((u / 3.9) ** 2 + (v / 6.4) ** 2 > 1) return null
+      if (Math.abs(u) < 0.55) return 'G'
+      return u > 0 ? 'G' : 'g'
+    })
+    ;[[3, 13], [2, 14]].forEach(([x, y]) => {
+      g[y][x] = 'N'
+    })
+    return g
+  },
+  // Bông hoa
+  flower() {
+    const g = blank()
+    paint(g, (x, y) => (inRect(x, y, 7.4, 10, 8.6, 15) ? 'g' : null))
+    ;[[9, 12], [10, 12], [10, 11], [6, 13], [5, 13], [5, 12]].forEach(([x, y]) => {
+      g[y][x] = 'g'
+    })
+    for (let i = 0; i < 5; i += 1) {
+      const a = (-90 + i * 72) * (Math.PI / 180)
+      const cx = 8 + Math.cos(a) * 3.6
+      const cy = 6.6 + Math.sin(a) * 3.6
+      paint(g, (x, y) => (inCircle(x, y, cx, cy, 2.6) ? (i < 2 ? 'm' : 'M') : null))
+    }
+    paint(g, (x, y) => (inCircle(x, y, 8, 6.6, 2) ? 'y' : null))
+    return g
+  },
+  // Quả táo
+  apple() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (inCircle(x, y, 5.9, 9, 4.6) || inCircle(x, y, 10.1, 9, 4.6) || inRect(x, y, 5.9, 5, 10.1, 13.6)) {
+        if (y < 4.4) return null
+        return x > 10 || y > 12.6 ? 'R' : 'r'
+      }
+      return null
+    })
+    ;[[5, 7], [5, 8], [6, 6]].forEach(([x, y]) => {
+      if (g[y][x] !== '.') g[y][x] = 'm'
+    })
+    ;[[8, 2], [8, 3], [8, 4]].forEach(([x, y]) => {
+      g[y][x] = 'N'
+    })
+    ;[[9, 2], [10, 2], [11, 2], [10, 3], [9, 3]].forEach(([x, y]) => {
+      g[y][x] = 'g'
+    })
+    return g
+  },
+  // Trái tim
+  heart() {
+    const g = blank()
+    paint(g, (x, y) => {
+      const nx = (x - 8) / 6.4
+      const ny = -(y - 8.8) / 6.4
+      const v = (nx * nx + ny * ny - 1) ** 3 - nx * nx * ny ** 3
+      if (v > 0) return null
+      if (x + y < 12.6) return 'm'
+      if (x + y > 18.4) return 'R'
+      return 'r'
     })
     return g
   },

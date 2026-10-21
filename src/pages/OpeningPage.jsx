@@ -94,7 +94,7 @@ function Backdrop() {
   )
 }
 
-function Hud({ index, total, results, seconds, urgent, muted, onMute, showTimer }) {
+function Hud({ index, total, seconds, urgent, muted, onMute, showTimer }) {
   const lit = Math.ceil((seconds / PR.seconds) * SEGMENTS)
   return (
     <header className="pr-hud">
@@ -108,7 +108,7 @@ function Hud({ index, total, results, seconds, urgent, muted, onMute, showTimer 
 
       <div className="pr-rounds" aria-label={`Câu ${index + 1} trên ${total}`}>
         {Array.from({ length: total }, (_, i) => {
-          const state = results[i] ?? (i === index ? 'now' : 'next')
+          const state = i < index ? 'done' : i === index ? 'now' : 'next'
           return <span key={i} className={`pr-round pr-round-${state}`} />
         })}
       </div>
@@ -204,19 +204,18 @@ function Curtain({ id }) {
 export default function OpeningPage() {
   const scale = useStageScale()
   const puzzles = PR.puzzles
-  const [phase, setPhase] = useState('intro') // intro | play | solved | missed | final
+  const [phase, setPhase] = useState('intro') // intro | play | revealed | final
   const [index, setIndex] = useState(0)
   const [seconds, setSeconds] = useState(PR.seconds)
   const [revealed, setRevealed] = useState([])
-  const [results, setResults] = useState([])
   const [muted, setMutedState] = useState(false)
   const [curtainId, setCurtainId] = useState(0)
 
   const puzzle = puzzles[index]
   const letters = useMemo(() => [...puzzle.answer.replace(/ /g, '')], [puzzle])
   const playing = phase === 'play'
-  const ended = phase === 'solved' || phase === 'missed'
-  const wins = results.filter((r) => r === 'win').length
+  const revealedAnswer = phase === 'revealed'
+  const showResult = phase === 'revealed'
 
   useEffect(() => setMuted(muted), [muted])
 
@@ -229,22 +228,17 @@ export default function OpeningPage() {
     })
   }, [letters])
 
-  const finishPuzzle = useCallback(
-    (kind) => {
-      setPhase(kind === 'win' ? 'solved' : 'missed')
-      setResults((cur) => [...cur.slice(0, index), kind])
-      if (kind === 'win') sfx.solve()
-      else sfx.wrong()
-    },
-    [index],
-  )
+  // Hết giờ (hoặc bấm hiện sớm): lật đáp án để ghi điểm cho đội viết đúng.
+  const showAnswer = useCallback(() => {
+    setPhase('revealed')
+    sfx.solve()
+  }, [])
 
   const start = useCallback(() => {
     setPhase('play')
     setIndex(0)
     setSeconds(PR.seconds)
     setRevealed([])
-    setResults([])
     setCurtainId((n) => n + 1)
   }, [])
 
@@ -268,7 +262,7 @@ export default function OpeningPage() {
       const left = seconds - 1
       if (left <= 0) {
         setSeconds(0)
-        finishPuzzle('miss')
+        showAnswer()
         return
       }
       if (left <= 5) sfx.countdown()
@@ -279,20 +273,20 @@ export default function OpeningPage() {
       setSeconds(left)
     }, 1000)
     return () => clearTimeout(id)
-  }, [playing, seconds, finishPuzzle, revealOne])
+  }, [playing, seconds, showAnswer, revealOne])
 
   useEffect(() => {
     const onKey = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return
-      if (phase === 'intro' && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); start() }
-      else if (playing && e.key === ' ') { e.preventDefault(); finishPuzzle('win') }
+      const go = e.key === 'Enter' || e.key === ' '
+      if (phase === 'intro' && go) { e.preventDefault(); start() }
       else if (playing && (e.key === 'h' || e.key === 'H')) { revealOne(); sfx.land() }
-      else if (playing && e.key === 'Enter') { finishPuzzle('miss') }
-      else if (ended && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); next() }
+      else if (playing && go) { e.preventDefault(); showAnswer() }
+      else if (revealedAnswer && go) { e.preventDefault(); next() }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, playing, ended, start, next, finishPuzzle, revealOne])
+  }, [phase, playing, revealedAnswer, start, next, showAnswer, revealOne])
 
   const style = { transform: `translate(-50%, -50%) scale(${scale})` }
 
@@ -303,7 +297,6 @@ export default function OpeningPage() {
         <Hud
           index={index}
           total={puzzles.length}
-          results={results}
           seconds={seconds}
           urgent={playing && seconds <= 10}
           muted={muted}
@@ -327,10 +320,10 @@ export default function OpeningPage() {
             </MotionDiv>
           )}
 
-          {(playing || ended) && (
+          {(playing || showResult) && (
             <MotionDiv key={`p-${index}`} className="pr-play" initial={{ opacity: 0, x: 90 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -90 }} transition={{ duration: 0.45, ease: EASE }}>
-              <p key={phase} className={`pr-kind${phase === 'solved' ? ' is-win' : ''}${phase === 'missed' ? ' is-miss' : ''}`} aria-live="polite">
-                {phase === 'solved' ? 'Cả lớp đoán đúng!' : phase === 'missed' ? (seconds === 0 ? 'Hết giờ, đáp án đây' : 'Đáp án đây') : puzzle.kind}
+              <p key={phase} className={`pr-kind${revealedAnswer ? ' is-win' : ''}`} aria-live="polite">
+                {revealedAnswer ? 'Đáp án' : puzzle.kind}
               </p>
 
               <div className="pr-picture-row">
@@ -338,20 +331,20 @@ export default function OpeningPage() {
                   <div className="pr-picture-wrap" key={item}>
                     <div className="pr-box pr-picture">
                       {puzzle.images ? (
-                        <img className="pr-photo" src={item} alt={ended ? puzzle.names[i] : 'Hình đố'} />
+                        <img className="pr-photo" src={item} alt={revealedAnswer ? puzzle.names[i] : 'Hình đố'} />
                       ) : (
                         <PixelSprite name={item} size={340} className={playing ? 'pr-bob' : ''} />
                       )}
                     </div>
-                    <p className={`pr-caption${ended ? ' is-shown' : ''}`}>{puzzle.names[i]}</p>
+                    <p className={`pr-caption${revealedAnswer ? ' is-shown' : ''}`}>{puzzle.names[i]}</p>
                     {i < list.length - 1 && <span className="pr-plus" aria-hidden="true">+</span>}
                   </div>
                 ))}
               </div>
 
-              <div className={`pr-answer${phase === 'solved' ? ' is-win' : ''}${phase === 'missed' ? ' is-miss' : ''}`}>
-                <Tiles answer={puzzle.answer} revealed={revealed} flip={ended} />
-                {phase === 'solved' && <Confetti />}
+              <div className={`pr-answer${revealedAnswer ? ' is-win' : ''}`}>
+                <Tiles answer={puzzle.answer} revealed={revealed} flip={revealedAnswer} />
+                {revealedAnswer && <Confetti />}
               </div>
             </MotionDiv>
           )}
@@ -373,28 +366,25 @@ export default function OpeningPage() {
               </h1>
               <MotionDiv initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.6, ease: EASE }} className="pr-final-lower">
                 <p className="pr-final-lead">{PR.finalLead}</p>
-                <p className="pr-final-score">Cả lớp đoán đúng {wins} trên {puzzles.length} câu</p>
                 <Link to="/ly-thuyet" className="pr-btn pr-btn-gold pr-btn-xl">Vào bài</Link>
               </MotionDiv>
             </MotionDiv>
           )}
         </AnimatePresence>
 
-        {(playing || ended) && (
+        {(playing || showResult) && (
           <footer className="pr-controls">
-            {playing ? (
+            {playing && (
               <>
                 <button type="button" className="pr-btn pr-btn-ghost" onClick={() => { revealOne(); sfx.land() }}>
                   Gợi ý <kbd>H</kbd>
                 </button>
-                <button type="button" className="pr-btn pr-btn-ghost" onClick={() => finishPuzzle('miss')}>
-                  Hiện đáp án <kbd>Enter</kbd>
-                </button>
-                <button type="button" className="pr-btn pr-btn-gold" onClick={() => finishPuzzle('win')}>
-                  Cả lớp đoán đúng <kbd>Space</kbd>
+                <button type="button" className="pr-btn pr-btn-gold" onClick={showAnswer}>
+                  Hiện đáp án <kbd>Space</kbd>
                 </button>
               </>
-            ) : (
+            )}
+            {revealedAnswer && (
               <button type="button" className="pr-btn pr-btn-gold pr-btn-wide" onClick={next} autoFocus>
                 {index + 1 >= puzzles.length ? 'Sang phần mở bài' : 'Câu tiếp theo'} <kbd>Space</kbd>
               </button>

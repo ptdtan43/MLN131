@@ -10,7 +10,7 @@ Phần của nhóm: Chương 3, mục III "Quá độ chủ nghĩa xã hội ở
 | Trang | Việc cần làm khi thuyết trình | Thời lượng gợi ý |
 | --- | --- | --- |
 | Tổng quan | Giới thiệu bài, dẫn vào trò chơi mở đầu | |
-| Mở đầu | **Picture Rush** (đổi hình bắt chữ): 3 câu đố vui, câu cuối "qua đò" → "quá độ" dẫn vào bài. Toàn màn hình 16:9. Phím: Space (cả lớp đoán đúng), H (gợi ý), Enter (hiện đáp án) | khoảng 5 phút |
+| Mở đầu | **Picture Rush** (đổi hình bắt chữ): 9 câu đố vui, câu cuối "qua đò" → "quá độ" dẫn vào bài. Toàn màn hình 16:9. 10 câu, mỗi câu 30 giây; hết giờ đáp án tự hiện để ghi điểm cho các đội. Phím: Space (hiện đáp án sớm, rồi câu tiếp), H (gợi ý) | khoảng 5 phút |
 | Lý thuyết | Hai phần chính và phần tóm lại. Mỗi phần có mục "Gợi ý nói" để bấm mở | tối đa 10 phút |
 | Game | "Chiếc nón quá độ": quay số, đoán từ khóa theo đội (4 đội) | khoảng 5 phút |
 | Hỏi đáp | Ba câu hỏi cuối Chương 3 và các câu dễ gặp | |
