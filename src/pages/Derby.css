@@ -4,7 +4,13 @@
 
 /* Tab tên vòng chơi */
 .dv-tabs { position: absolute; left: 610px; top: 46px; display: flex; gap: 8px; }
-.dv-tab { height: 50px; padding: 0 20px; display: inline-flex; align-items: center; background: #26231f; color: var(--muted); font-weight: 800; font-size: 24px; white-space: nowrap; }
+.dv-tab { height: 50px; padding: 0 16px; display: inline-flex; align-items: center; gap: 12px; background: #26231f; color: var(--muted); font-weight: 800; font-size: 22px; white-space: nowrap; }
+.dv-pips { display: inline-flex; gap: 4px; }
+.dv-pips i { width: 9px; height: 9px; background: rgb(239 232 216 / 0.2); }
+.dv-tab.is-now .dv-pips i { background: rgb(20 19 17 / 0.25); }
+.dv-pips i.is-done { background: var(--gold-deep); }
+.dv-tab.is-done .dv-pips i { background: #141311; }
+.dv-pips i.is-now { background: #141311; outline: 2px solid #141311; outline-offset: 2px; }
 .dv-tab.is-now { background: var(--cream); color: #141311; }
 .dv-tab.is-done { background: var(--gold-deep); color: #141311; }
 
@@ -12,7 +18,7 @@
 .dv-track { --edge: #4a4132; --fill: #15130f; position: absolute; left: 64px; top: 140px; width: 1792px; height: 384px; }
 .dv-station { position: absolute; top: 10px; width: 270px; margin-left: -135px; text-align: center; z-index: 1; }
 .dv-station-year { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 36px; line-height: 1; color: var(--gold); }
-.dv-station-label { font-size: 20px; font-weight: 600; color: var(--muted); margin-top: 4px; }
+.dv-station-label { white-space: pre-line; font-size: 20px; font-weight: 600; color: var(--muted); margin-top: 4px; }
 .dv-station-line { position: absolute; left: 50%; top: 82px; height: 290px; border-left: 4px dotted rgb(239 232 216 / 0.18); }
 .dv-lane { position: absolute; left: 0; right: 0; height: 70px; }
 .dv-lane-label { position: absolute; left: 34px; top: 4px; width: 210px; }
@@ -39,34 +45,18 @@
 .dv-score.is-lead { color: var(--gold); }
 
 /* Bảng nhiệm vụ */
-.dv-board { --fill: #1a1814; --edge: #4a4132; position: absolute; left: 64px; top: 540px; width: 1792px; height: 392px; padding: 20px 40px 18px; display: flex; flex-direction: column; gap: 14px; }
+.dv-board { --fill: #1a1814; --edge: #4a4132; position: absolute; left: 64px; top: 540px; width: 1792px; height: 366px; padding: 18px 40px 16px; }
+.dv-board-inner { height: 100%; display: flex; flex-direction: column; gap: 14px; }
 .dv-board-head { display: flex; align-items: baseline; gap: 34px; flex-wrap: wrap; }
 .dv-task { font-size: 38px; font-weight: 800; line-height: 1.2; }
 .dv-how { font-size: 26px; font-weight: 600; color: var(--muted); }
 .dv-card { display: flex; align-items: center; gap: 16px; padding: 12px 18px; background: #2a2620; border-left: 8px solid var(--gold); font-size: 29px; font-weight: 700; line-height: 1.22; }
 .dv-letter { flex: none; width: 52px; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 56px; line-height: 1; color: var(--gold); }
-.dv-pool { flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 1fr; gap: 14px; }
-.dv-bins { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; min-height: 0; }
-.dv-bin { padding: 10px 16px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 0; }
-.dv-bin.is-skip { background: #2b1512; }
-.dv-bin.is-keep { background: #2b2410; }
-.dv-bin-title { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 40px; line-height: 1; letter-spacing: 0.03em; }
-.dv-bin.is-skip .dv-bin-title { color: #ee6a52; }
-.dv-bin.is-keep .dv-bin-title { color: var(--gold); }
-.dv-bin-cards { flex: 1; display: grid; grid-auto-rows: 1fr; gap: 8px; min-height: 0; }
-.dv-bin .dv-card { padding: 4px 14px; font-size: 25px; background: #1d1a15; }
-.dv-bin.is-skip .dv-card { border-left-color: #ee6a52; }
-.dv-bin .dv-letter { font-size: 40px; width: 40px; }
 .dv-order { flex: 1; display: flex; gap: 14px; min-height: 0; }
 .dv-order-card { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dv-order-year { height: 62px; text-align: center; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 58px; line-height: 62px; color: var(--gold); transition: opacity 0.5s 0.4s; }
 .dv-order .dv-card-tall { font-size: 23px; line-height: 1.25; }
 .dv-card-tall { flex: 1; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4px; padding: 14px 18px; font-size: 27px; }
-.dv-cloze { flex: 1; display: grid; grid-template-columns: 1fr 440px; gap: 34px; min-height: 0; }
-.dv-cloze-list { display: flex; flex-direction: column; justify-content: space-between; margin: 0; padding: 0; list-style: none; }
-.dv-cloze-item { display: flex; align-items: center; gap: 16px; }
-.dv-cloze-no { flex: none; width: 46px; height: 46px; display: grid; place-items: center; background: var(--gold); color: #141311; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 34px; }
-.dv-cloze-item p { font-size: 27px; font-weight: 600; line-height: 1.25; }
 .dv-blank { display: inline-block; min-width: 190px; height: 40px; margin: 0 6px; vertical-align: bottom; background: #0f0e0b; border-bottom: 4px solid var(--gold); text-align: center; }
 .dv-blank-word { display: inline-block; font-weight: 800; color: var(--gold); opacity: 0; transform: rotateX(90deg) translateY(10px); transition: opacity 0.4s var(--d, 0s), transform 0.5s var(--d, 0s); }
 .dv-blank.is-open .dv-blank-word { opacity: 1; transform: none; }
@@ -76,29 +66,8 @@
 .dv-bank-word { padding: 8px 16px; background: #35302a; font-size: 27px; font-weight: 700; transition: background-color 0.4s, color 0.4s; }
 .dv-bank-word.is-used { background: var(--gold); color: #141311; }
 .dv-bank-word.is-spare { opacity: 0.45; text-decoration: line-through; }
-.dv-answerline { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; }
-.dv-answerline-label { font-size: 26px; font-weight: 700; color: var(--muted); }
-.dv-answerline-text { font-size: 44px; font-weight: 800; color: var(--gold); line-height: 1.25; }
 
 /* Bảng chấm điểm */
-.dv-scoring { flex: 1; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-.dv-scoring-title { font-size: 24px; font-weight: 700; color: var(--muted); }
-.dv-score-rows { flex: 1; min-height: 0; display: grid; grid-template-rows: repeat(4, 1fr); gap: 6px; }
-.dv-score-row { display: grid; grid-template-columns: 170px 250px 110px 1fr; align-items: center; gap: 22px; padding: 0 20px; background: #26231d; border-left: 10px solid var(--team); }
-.dv-score-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 38px; line-height: 1; color: var(--team); }
-.dv-stepper { display: flex; align-items: center; gap: 12px; }
-.dv-stepper button { width: 44px; height: 44px; border: 0; background: var(--gold); color: #141311; font-size: 32px; font-weight: 800; line-height: 1; cursor: pointer; transition: transform 0.12s; }
-.dv-stepper button:hover { transform: translateY(-2px); }
-.dv-stepper button:active { transform: scale(0.94); }
-.dv-stepper-n { width: 60px; text-align: center; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 46px; line-height: 1; }
-.dv-gain { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 40px; line-height: 1; color: var(--gold); }
-.dv-perk-use { position: relative; display: flex; align-items: center; gap: 12px; }
-.dv-perk-use button { height: 42px; padding: 0 20px; border: 0; background: #3a352c; color: var(--cream); font: inherit; font-size: 23px; font-weight: 700; cursor: pointer; }
-.dv-perk-use button.is-on { background: var(--gold); color: #141311; }
-.dv-used { font-size: 22px; color: var(--muted); }
-.dv-steal { position: relative; display: flex; align-items: center; gap: 12px; }
-.dv-perk-use button:disabled { opacity: 0.4; cursor: default; }
-.dv-perk-note { font-size: 21px; font-weight: 600; color: var(--muted); }
 .dv-steal-menu { position: absolute; width: max-content; white-space: nowrap; left: 0; bottom: 48px; display: flex; gap: 8px; padding: 10px; background: #0f0e0b; z-index: 5; }
 .dv-steal-menu button { border-bottom: 6px solid var(--team); }
 .dv-steal-menu button:disabled { opacity: 0.3; cursor: default; }
@@ -194,3 +163,50 @@ button.dv-perk:hover { transform: translateY(-5px); background: #302b24; }
   .dv-horse.is-gallop, .dv-horse.is-gallop .dv-frame, .dv-horse.is-gallop + .dv-dust, .dv-lever.is-pulled .dv-lever-knob, .dv-slot-lights span.is-blink { animation: none !important; }
   .dv-horse-wrap, .dv-strip { transition-duration: 1ms !important; }
 }
+
+/* Chấm điểm: chạm vào đội làm đúng */
+.dv-board-head { align-items: center; gap: 22px; }
+.dv-kicker { flex: none; padding: 4px 14px 6px; background: var(--gold); color: #141311; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 30px; line-height: 1; letter-spacing: 0.04em; }
+.dv-task { font-size: 36px; }
+.dv-how { font-size: 24px; }
+
+/* Chặng 1: một thẻ, hai ô */
+.dv-sort { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 560px; gap: 24px; }
+.dv-statement { display: flex; align-items: center; padding: 8px 40px; background: #2a2620; border-left: 10px solid var(--gold); }
+.dv-statement p { font-size: 48px; font-weight: 800; line-height: 1.2; }
+.dv-sort-bins { display: grid; grid-template-rows: 1fr 1fr; gap: 12px; }
+.dv-sort-bin { display: grid; place-items: center; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 58px; letter-spacing: 0.04em; border-bottom: 8px solid transparent; transition: opacity 0.4s, transform 0.4s, background 0.4s; }
+.dv-sort-bin.is-skip { background: #2b1512; color: #ee6a52; border-color: #ee6a52; }
+.dv-sort-bin.is-keep { background: #2b2410; color: var(--gold); border-color: var(--gold); }
+.dv-sort-bin.is-right.is-skip { background: #ee6a52; color: #141311; }
+.dv-sort-bin.is-right.is-keep { background: var(--gold); color: #141311; }
+.dv-sort-bin.is-right { transform: scale(1.02); }
+.dv-sort-bin.is-wrong { opacity: 0.25; }
+
+/* Chặng 3: một câu, một chỗ trống */
+.dv-cloze1 { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+.dv-cloze1-sentence { font-size: 46px; font-weight: 700; line-height: 1.5; }
+.dv-cloze1 .dv-blank { min-width: 280px; height: 60px; margin: 0 8px; }
+.dv-cloze1 .dv-blank-word { font-size: 46px; line-height: 56px; }
+.dv-bank { display: flex; align-items: center; gap: 22px; }
+.dv-bank-title { flex: none; font-size: 24px; font-weight: 700; color: var(--muted); }
+.dv-bank-words { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.dv-controls-reveal { gap: 20px; align-items: flex-end; bottom: 28px; }
+.dv-controls-reveal .pr-btn-wide { min-width: 0; width: 500px; height: 112px; white-space: nowrap; }
+.dv-scorebar { display: flex; gap: 12px; }
+.dv-chip { position: relative; width: 290px; height: 112px; display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 8px 14px; background: #26231d; border-left: 10px solid var(--team); transition: background 0.2s; }
+.dv-chip.is-right { background: color-mix(in srgb, var(--team) 24%, #26231d); }
+.dv-chip-main { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; height: 54px; padding: 0; border: 0; background: transparent; color: var(--cream); font: inherit; cursor: pointer; text-align: left; }
+.dv-chip-main kbd { position: absolute; right: 8px; top: -10px; padding: 0 8px; background: #3a352c; color: var(--muted); font-size: 18px; font-weight: 800; }
+.dv-chip-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 38px; line-height: 1; color: var(--team); }
+.dv-chip-mark { min-width: 74px; padding: 6px 10px; text-align: center; background: #3a352c; color: var(--muted); font-size: 24px; font-weight: 800; line-height: 1.1; }
+.dv-chip.is-right .dv-chip-mark { background: var(--gold); color: #141311; }
+.dv-chip-gain { min-width: 54px; text-align: right; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 44px; line-height: 1; color: var(--gold); }
+.dv-chip-perk { position: relative; flex: 1; display: flex; align-items: center; }
+.dv-pill { height: 38px; padding: 0 16px; border: 0; background: #3a352c; color: var(--cream); font: inherit; font-size: 21px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.dv-pill.is-on { background: var(--gold); color: #141311; }
+.dv-pill.is-run { display: inline-flex; align-items: center; background: transparent; color: var(--gold); padding: 0; cursor: default; }
+.dv-pill:disabled { opacity: 0.4; cursor: default; }
+.dv-pill.is-last { animation: pr-blink 1.2s steps(2) infinite; }
+.dv-chip .dv-steal-menu { bottom: 52px; }

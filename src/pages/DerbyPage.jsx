@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { HorseSprite } from '../game/derby/horse'
 import { PixelSprite } from '../game/pixel'
-import { PERKS, ROUNDS, STATIONS, TEAMS, TRACK_STEPS } from '../game/derby/derbyData'
+import { CLOZE_BANK, PERKS, ROUNDS, STAGES, STATIONS, TEAMS, TRACK_STEPS } from '../game/derby/derbyData'
 import { setMuted, sfx } from '../game/sfx'
 import { useStageScale } from '../game/stage'
 import './PictureRush.css'
@@ -334,7 +334,7 @@ function Ceremony({ onDone }) {
               <Ticket tier="gold" team={t1} />
               <h2 className="dv-modal-title">Mời Top 1 “Đuổi hình bắt chữ” chọn quyền lợi</h2>
               <p className="dv-modal-lead">
-                <strong style={{ color: t1.color }}>{t1.name}</strong> chọn một trong ba quyền lợi. Quyền lợi chỉ dùng một lần duy nhất, ở vòng do đội tự chọn.
+                <strong style={{ color: t1.color }}>{t1.name}</strong> chọn một trong ba quyền lợi. Quyền lợi chỉ dùng một lần duy nhất, ở câu do đội tự chọn.
               </p>
               <div className="dv-perks">
                 {PERKS.map((p) => (
@@ -380,12 +380,12 @@ function Ceremony({ onDone }) {
 /* ---------- đường đua ---------- */
 const posX = (steps) => LANE_X0 + (Math.min(steps, TRACK_STEPS) / TRACK_STEPS) * LANE_LEN
 
-function Track({ steps, perks, galloping, pops, flashLane }) {
+function Track({ steps, perks, galloping, pops, flashLane, stageIdx }) {
   const maxSteps = Math.max(...steps)
   return (
     <section className="dv-track pr-box" aria-label="Đường đua">
       {STATIONS.map((s) => (
-        <div className="dv-station" key={s.step} style={{ left: posX(s.step), ...(s.step === TRACK_STEPS ? { marginLeft: -175 } : null) }}>
+        <div className="dv-station" key={s.step} style={{ left: posX(s.step), ...(s.step === TRACK_STEPS ? { width: 160, marginLeft: -80 } : null) }}>
           <p className="dv-station-year">{s.year}</p>
           <p className="dv-station-label">{s.label}</p>
           <span className="dv-station-line" />
@@ -399,9 +399,9 @@ function Track({ steps, perks, galloping, pops, flashLane }) {
             <div className="dv-lane-label">
               <p className="dv-lane-name">{t.name}</p>
               {perk && (
-                <p className={`dv-lane-perk${perk.used ? ' is-used' : ''}`}>
+                <p className={`dv-lane-perk${perk.used && !(perk.perk === 'double' && perk.activeStage === stageIdx) ? ' is-used' : ''}`}>
                   <PixelSprite name={perkById(perk.perk).sprite} size={30} />
-                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perk.used ? 'đã dùng' : perkById(perk.perk).badge}</span>
+                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perk.used ? (perk.perk === 'double' && perk.activeStage === stageIdx ? 'đang ×2' : 'đã dùng') : perkById(perk.perk).badge}</span>
                 </p>
               )}
             </div>
@@ -425,7 +425,7 @@ function Track({ steps, perks, galloping, pops, flashLane }) {
   )
 }
 
-/* ---------- bảng nhiệm vụ cho từng vòng ---------- */
+/* ---------- bảng nhiệm vụ cho từng câu ---------- */
 function LetterCard({ letter, children, year, className = '' }) {
   return (
     <>
@@ -438,30 +438,23 @@ function LetterCard({ letter, children, year, className = '' }) {
 }
 
 function SortBoard({ round, revealed }) {
-  const spring = (i) => ({ type: 'spring', stiffness: 130, damping: 18, delay: revealed ? i * 0.08 : 0 })
-  const card = (c, i) => (
-    <MotionDiv layout layoutId={`sort-${c.letter}`} key={c.letter} className="dv-card" transition={spring(i)}>
-      <LetterCard letter={c.letter}>{c.text}</LetterCard>
-    </MotionDiv>
-  )
+  const bins = [
+    { id: 'skip', label: 'BỎ QUA', cls: 'is-skip' },
+    { id: 'keep', label: 'KẾ THỪA', cls: 'is-keep' },
+  ]
   return (
-    <LayoutGroup>
-      {revealed ? (
-        <div className="dv-bins">
-          {[
-            { id: 'skip', label: 'BỎ QUA', cls: 'is-skip' },
-            { id: 'keep', label: 'KẾ THỪA', cls: 'is-keep' },
-          ].map((bin) => (
-            <div className={`dv-bin ${bin.cls}`} key={bin.id}>
-              <p className="dv-bin-title">{bin.label}</p>
-              <div className="dv-bin-cards">{round.cards.map((c, i) => (c.answer === bin.id ? card(c, i) : null))}</div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="dv-pool">{round.cards.map(card)}</div>
-      )}
-    </LayoutGroup>
+    <div className="dv-sort">
+      <div className="dv-statement">
+        <p>{round.statement}</p>
+      </div>
+      <div className="dv-sort-bins">
+        {bins.map((bin) => (
+          <div key={bin.id} className={`dv-sort-bin ${bin.cls}${revealed ? (round.answer === bin.id ? ' is-right' : ' is-wrong') : ''}`}>
+            {bin.label}
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -482,29 +475,21 @@ function OrderBoard({ round, revealed }) {
 }
 
 function ClozeBoard({ round, revealed }) {
-  const { bank, items } = round.cloze
-  const used = items.map((c) => c.answer)
+  const { before, after, answer } = round.cloze
   return (
-    <div className="dv-cloze">
-      <ol className="dv-cloze-list">
-        {items.map((c, i) => (
-          <li key={i} className="dv-cloze-item">
-            <span className="dv-cloze-no">{i + 1}</span>
-            <p>
-              {c.before}
-              <span className={`dv-blank${revealed ? ' is-open' : ''}`} style={{ '--d': `${i * 0.12}s` }}>
-                <span className="dv-blank-word">{c.answer}</span>
-              </span>
-              {c.after}
-            </p>
-          </li>
-        ))}
-      </ol>
+    <div className="dv-cloze1">
+      <p className="dv-cloze1-sentence">
+        {before}
+        <span className={`dv-blank${revealed ? ' is-open' : ''}`}>
+          <span className="dv-blank-word">{answer}</span>
+        </span>
+        {after}
+      </p>
       <div className="dv-bank">
         <p className="dv-bank-title">Từ cho sẵn</p>
         <div className="dv-bank-words">
-          {bank.map((w) => (
-            <span key={w} className={`dv-bank-word${revealed ? (used.includes(w) ? ' is-used' : ' is-spare') : ''}`}>{w}</span>
+          {CLOZE_BANK.map((w) => (
+            <span key={w} className={`dv-bank-word${revealed ? (w === answer ? ' is-used' : ' is-spare') : ''}`}>{w}</span>
           ))}
         </div>
       </div>
@@ -512,68 +497,83 @@ function ClozeBoard({ round, revealed }) {
   )
 }
 
-/* ---------- bảng chấm điểm cho người trình bày ---------- */
-function ScoringPanel({ round, roundIdx, lastRound, counts, setCounts, perks, useDouble, setUseDouble, usePlus2, setUsePlus2, stealTarget, setStealTarget, steps }) {
+/* ---------- thanh chấm điểm cho người trình bày: chạm vào đội làm đúng ---------- */
+function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setUseDouble, usePlus2, setUsePlus2, stealTarget, setStealTarget, steps }) {
   const [menu, setMenu] = useState(null)
-  const bump = (i, d) => setCounts((c) => c.map((v, k) => (k === i ? Math.max(0, Math.min(round.max, v + d)) : v)))
+  const toggleCorrect = (i) => setCorrect((arr) => arr.map((v, k) => (k === i ? !v : v)))
   const toggle = (setter, i) => setter((arr) => arr.map((v, k) => (k === i ? !v : v)))
-  /* Cướp bước được tính sau khi cộng điểm vòng này, nên số bước có thể cướp là số bước sau vòng. */
-  const projected = steps.map((s, k) => s + counts[k] * (useDouble[k] ? 2 : 1) + (usePlus2[k] ? 2 : 0))
-  const available_for = (target) => projected[target] - stealTarget.filter((t) => t === target).length
-  const canSteal = (i) => TEAMS.some((o) => o.id !== i && available_for(o.id) >= 1)
-  const isOn = (i) => useDouble[i] || usePlus2[i] || stealTarget[i] !== null
+  const doubledNow = (i) => useDouble[i] || (perks[i]?.perk === 'double' && perks[i].activeStage === round.stage)
+  const base = (i) => (correct[i] ? 1 : 0) * (doubledNow(i) ? 2 : 1) + (usePlus2[i] ? 2 : 0)
+  /* Cướp bước được tính sau khi cộng điểm câu này, nên số bước có thể cướp là số bước sau câu. */
+  const projected = steps.map((s, k) => s + base(k))
+  const takeable = (target) => projected[target] - stealTarget.filter((t) => t === target).length
+  const canSteal = (i) => TEAMS.some((o) => o.id !== i && takeable(o.id) >= 1)
+  const lastRound = roundIdx === ROUNDS.length - 1
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return
+      const n = Number(e.key)
+      if (n >= 1 && n <= 4) toggleCorrect(n - 1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   return (
-    <div className="dv-scoring">
-      <p className="dv-scoring-title">Chấm điểm: mỗi ý đúng là một bước. Tối đa {round.max} bước.</p>
-      <div className="dv-score-rows">
-        {TEAMS.map((t, i) => {
-          const perk = perks[i]
-          const available = perk && !perk.used
-          const gain = counts[i] * (useDouble[i] ? 2 : 1) + (usePlus2[i] ? 2 : 0) + (stealTarget[i] !== null ? 1 : 0)
-          return (
-            <div className="dv-score-row" key={t.id} style={{ '--team': t.color }}>
-              <p className="dv-score-name">{t.name}</p>
-              <div className="dv-stepper">
-                <button type="button" onClick={() => bump(i, -1)} aria-label={`Bớt một ý của ${t.name}`}>−</button>
-                <span className="dv-stepper-n" aria-live="polite">{counts[i]}</span>
-                <button type="button" onClick={() => bump(i, 1)} aria-label={`Thêm một ý cho ${t.name}`}>+</button>
-              </div>
-              <p className="dv-gain">+{gain}</p>
-              <div className="dv-perk-use">
-                {available && perk.perk === 'double' && (
-                  <button type="button" className={useDouble[i] ? 'is-on' : ''} onClick={() => toggle(setUseDouble, i)}>Nhân đôi vòng này</button>
-                )}
-                {available && perk.perk === 'plus2' && (
-                  <button type="button" className={usePlus2[i] ? 'is-on' : ''} onClick={() => toggle(setUsePlus2, i)}>Tiến thêm 2 bước</button>
-                )}
-                {available && perk.perk === 'steal' && (
-                  <div className="dv-steal">
-                    <button
-                      type="button"
-                      className={stealTarget[i] !== null ? 'is-on' : ''}
-                      disabled={stealTarget[i] === null && !canSteal(i)}
-                      onClick={() => (stealTarget[i] !== null ? setStealTarget((a) => a.map((v, k) => (k === i ? null : v))) : setMenu(menu === i ? null : i))}
-                    >
-                      {stealTarget[i] !== null ? `Cướp của ${TEAMS[stealTarget[i]].name}` : 'Cướp 1 bước'}
-                    </button>
-                    {stealTarget[i] === null && !canSteal(i) && <span className="dv-perk-note">Chưa đội nào có bước để cướp</span>}
-                    {menu === i && (
-                      <div className="dv-steal-menu">
-                        {TEAMS.filter((o) => o.id !== i).map((o) => (
-                          <button key={o.id} type="button" disabled={available_for(o.id) < 1} style={{ '--team': o.color }} onClick={() => { setStealTarget((a) => a.map((v, k) => (k === i ? o.id : v))); setMenu(null) }}>
-                            {o.name} · {projected[o.id]} bước
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-                {available && roundIdx === lastRound && !isOn(i) && <span className="dv-perk-note">Vòng cuối: dùng hoặc mất quyền lợi</span>}
-              </div>
+    <div className="dv-scorebar" role="group" aria-label="Chấm điểm: chạm vào đội trả lời đúng">
+      {TEAMS.map((t, i) => {
+        const perk = perks[i]
+        const available = perk && !perk.used
+        const gain = base(i) + (stealTarget[i] !== null ? 1 : 0)
+        const runningDouble = perk?.perk === 'double' && perk.used && perk.activeStage === round.stage && !useDouble[i]
+        const on = useDouble[i] || usePlus2[i] || stealTarget[i] !== null
+        return (
+          <div className={`dv-chip${correct[i] ? ' is-right' : ''}`} key={t.id} style={{ '--team': t.color }}>
+            <button type="button" className="dv-chip-main" aria-pressed={correct[i]} onClick={() => toggleCorrect(i)}>
+              <kbd>{i + 1}</kbd>
+              <span className="dv-chip-name">{t.name}</span>
+              <span className="dv-chip-mark">{correct[i] ? 'Đúng' : 'Sai'}</span>
+              <span className="dv-chip-gain">+{gain}</span>
+            </button>
+            <div className="dv-chip-perk">
+              {available && perk.perk === 'double' && (
+                <button type="button" className={`dv-pill${useDouble[i] ? ' is-on' : ''}${lastRound && !on ? ' is-last' : ''}`} onClick={() => toggle(setUseDouble, i)}>
+                  {useDouble[i] ? '×2 hết chặng' : 'Nhân đôi'}
+                </button>
+              )}
+              {available && perk.perk === 'plus2' && (
+                <button type="button" className={`dv-pill${usePlus2[i] ? ' is-on' : ''}${lastRound && !on ? ' is-last' : ''}`} onClick={() => toggle(setUsePlus2, i)}>
+                  {usePlus2[i] ? 'Cộng thêm 2' : 'Tiến thêm 2'}
+                </button>
+              )}
+              {available && perk.perk === 'steal' && (
+                <>
+                  <button
+                    type="button"
+                    className={`dv-pill${stealTarget[i] !== null ? ' is-on' : ''}${lastRound && !on ? ' is-last' : ''}`}
+                    disabled={stealTarget[i] === null && !canSteal(i)}
+                    title={stealTarget[i] === null && !canSteal(i) ? 'Chưa đội nào có bước để cướp' : undefined}
+                    onClick={() => (stealTarget[i] !== null ? setStealTarget((a) => a.map((v, k) => (k === i ? null : v))) : setMenu(menu === i ? null : i))}
+                  >
+                    {stealTarget[i] !== null ? `Cướp của ${TEAMS[stealTarget[i]].name}` : canSteal(i) ? 'Cướp 1 bước' : 'Chưa có bước để cướp'}
+                  </button>
+                  {menu === i && (
+                    <div className="dv-steal-menu">
+                      {TEAMS.filter((o) => o.id !== i).map((o) => (
+                        <button key={o.id} type="button" disabled={takeable(o.id) < 1} style={{ '--team': o.color }} onClick={() => { setStealTarget((a) => a.map((v, k) => (k === i ? o.id : v))); setMenu(null) }}>
+                          {o.name} · {projected[o.id]} bước
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+              {runningDouble && <span className="dv-pill is-run">×2 đang chạy</span>}
             </div>
-          )
-        })}
-      </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -626,10 +626,10 @@ export default function DerbyPage() {
   const [muted, setMutedState] = useState(false)
   const [perks, setPerks] = useState([null, null, null, null])
   const [roundIdx, setRoundIdx] = useState(0)
-  const [phase, setPhase] = useState('brief') // brief | timing | reveal | scoring | running | done
+  const [phase, setPhase] = useState('brief') // brief | timing | reveal | running
   const [seconds, setSeconds] = useState(ROUNDS[0].seconds)
   const [steps, setSteps] = useState([0, 0, 0, 0])
-  const [counts, setCounts] = useState([0, 0, 0, 0])
+  const [correct, setCorrect] = useState([false, false, false, false])
   const [useDouble, setUseDouble] = useState([false, false, false, false])
   const [usePlus2, setUsePlus2] = useState([false, false, false, false])
   const [stealTarget, setStealTarget] = useState([null, null, null, null])
@@ -641,11 +641,11 @@ export default function DerbyPage() {
 
   const round = ROUNDS[roundIdx]
   const leader = Math.max(...steps)
-  const era = leader >= 16 ? 2 : leader >= 8 ? 1 : 0
+  const era = leader >= 10 ? 2 : leader >= 5 ? 1 : 0
   useEffect(() => setMuted(muted), [muted])
 
   const resetRoundInputs = () => {
-    setCounts([0, 0, 0, 0])
+    setCorrect([false, false, false, false])
     setUseDouble([false, false, false, false])
     setUsePlus2([false, false, false, false])
     setStealTarget([null, null, null, null])
@@ -684,7 +684,10 @@ export default function DerbyPage() {
 
   const applyScoring = () => {
     const before = steps
-    const gains = TEAMS.map((_, i) => counts[i] * (useDouble[i] ? 2 : 1) + (usePlus2[i] ? 2 : 0))
+    const gains = TEAMS.map((_, i) => {
+      const doubled = useDouble[i] || (perks[i]?.perk === 'double' && perks[i].activeStage === round.stage)
+      return (correct[i] ? 1 : 0) * (doubled ? 2 : 1) + (usePlus2[i] ? 2 : 0)
+    })
     const after = before.map((s, i) => s + gains[i])
     stealTarget.forEach((target, i) => {
       if (target !== null && after[target] > 0) {
@@ -696,7 +699,8 @@ export default function DerbyPage() {
       prev.map((p, i) => {
         if (!p || p.used) return p
         const usedNow = (p.perk === 'double' && useDouble[i]) || (p.perk === 'plus2' && usePlus2[i]) || (p.perk === 'steal' && stealTarget[i] !== null)
-        return usedNow ? { ...p, used: true } : p
+        if (!usedNow) return p
+        return p.perk === 'double' ? { ...p, used: true, activeStage: round.stage } : { ...p, used: true }
       }),
     )
     setSteps(after)
@@ -724,11 +728,11 @@ export default function DerbyPage() {
       setGalloping([false, false, false, false])
       setPops([null, null, null, null])
       setFlashLane([])
-      setPhase('done')
+      advance()
     }, 2600)
   }
 
-  const nextRound = () => {
+  const advance = () => {
     if (roundIdx + 1 >= ROUNDS.length) {
       setStage('result')
       setCurtainId((n) => n + 1)
@@ -740,7 +744,7 @@ export default function DerbyPage() {
     setSeconds(ROUNDS[nextIdx].seconds)
     setPhase('brief')
     resetRoundInputs()
-    setCurtainId((n) => n + 1)
+    if (ROUNDS[nextIdx].stage !== round.stage) setCurtainId((n) => n + 1)
   }
 
   const begin = ({ top1, top2, perk1, perk2 }) => {
@@ -768,9 +772,7 @@ export default function DerbyPage() {
     else if (stage === 'race') {
       if (phase === 'brief') startTimer()
       else if (phase === 'timing') reveal()
-      else if (phase === 'reveal') setPhase('scoring')
-      else if (phase === 'scoring') applyScoring()
-      else if (phase === 'done') nextRound()
+      else if (phase === 'reveal') applyScoring()
     }
   })
 
@@ -791,9 +793,7 @@ export default function DerbyPage() {
   const labels = {
     brief: 'Bắt đầu tính giờ',
     timing: 'Dừng và hiện lời giải',
-    reveal: 'Chấm điểm',
-    scoring: 'Cho ngựa chạy',
-    done: roundIdx + 1 >= ROUNDS.length ? 'Xem kết quả' : 'Vòng tiếp theo',
+    reveal: 'Cho ngựa chạy',
   }
 
   return (
@@ -810,9 +810,16 @@ export default function DerbyPage() {
             </div>
           </div>
           {stage === 'race' && (
-            <div className="dv-tabs" aria-label={`Vòng ${roundIdx + 1} trên ${ROUNDS.length}`}>
-              {ROUNDS.map((r, i) => (
-                <span key={r.id} className={`dv-tab${i === roundIdx ? ' is-now' : ''}${i < roundIdx ? ' is-done' : ''}`}>{r.name}</span>
+            <div className="dv-tabs" aria-label={`Chặng ${round.stage + 1}, câu ${round.nth} trên 3`}>
+              {STAGES.map((st, si) => (
+                <span key={st.name} className={`dv-tab${si === round.stage ? ' is-now' : ''}${si < round.stage ? ' is-done' : ''}`}>
+                  {st.name}
+                  <span className="dv-pips" aria-hidden="true">
+                    {[1, 2, 3].map((n) => (
+                      <i key={n} className={si < round.stage || (si === round.stage && n < round.nth) ? 'is-done' : si === round.stage && n === round.nth ? 'is-now' : ''} />
+                    ))}
+                  </span>
+                </span>
               ))}
             </div>
           )}
@@ -845,7 +852,7 @@ export default function DerbyPage() {
               ))}
             </div>
             <h1 className="pr-title dv-title">KNOWLEDGE DERBY</h1>
-            <p className="pr-intro-lead">Bốn đội chạy trên con đường quá độ. Mỗi ý làm đúng là một bước.</p>
+            <p className="pr-intro-lead">Chín câu hỏi nhanh, ba chặng. Mỗi câu đúng là một bước.</p>
             <button type="button" className="pr-btn pr-btn-gold pr-btn-xl" onClick={() => setStage('ceremony')}>
               Nhận quyền lợi <kbd>Space</kbd>
             </button>
@@ -854,51 +861,45 @@ export default function DerbyPage() {
 
         {stage === 'race' && (
           <>
-            <Track steps={steps} perks={perks} galloping={galloping} pops={pops} flashLane={flashLane} />
-            <section className="dv-board pr-box" aria-label={`Nhiệm vụ vòng ${roundIdx + 1}`}>
-              <div className="dv-board-head">
-                <h2 className="dv-task">{round.task}</h2>
-                {(phase === 'brief' || phase === 'timing') && <p className="dv-how">{round.how}</p>}
-              </div>
-              {phase === 'scoring' || phase === 'running' || phase === 'done' ? (
-                phase === 'scoring' ? (
-                  <ScoringPanel
-                    round={round}
-                    roundIdx={roundIdx}
-                    lastRound={ROUNDS.length - 1}
-                    counts={counts}
-                    setCounts={setCounts}
-                    perks={perks}
-                    useDouble={useDouble}
-                    setUseDouble={setUseDouble}
-                    usePlus2={usePlus2}
-                    setUsePlus2={setUsePlus2}
-                    stealTarget={stealTarget}
-                    setStealTarget={setStealTarget}
-                    steps={steps}
-                  />
-                ) : (
-                  <div className="dv-answerline" aria-live="polite">
-                    <p className="dv-answerline-label">Lời giải</p>
-                    <p className="dv-answerline-text">{round.answerLine}</p>
-                  </div>
-                )
-              ) : (
-                <>
-                  {round.id === 'sort' && <SortBoard round={round} revealed={phase === 'reveal'} />}
-                  {round.id === 'order' && <OrderBoard round={round} revealed={phase === 'reveal'} />}
-                  {round.id === 'cloze' && <ClozeBoard round={round} revealed={phase === 'reveal'} />}
-                </>
-              )}
+            <Track steps={steps} perks={perks} galloping={galloping} pops={pops} flashLane={flashLane} stageIdx={round.stage} />
+            <section className="dv-board pr-box" aria-label={`Câu ${round.nth} của chặng ${round.stage + 1}`}>
+              <MotionDiv key={roundIdx} className="dv-board-inner" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: EASE }}>
+                <div className="dv-board-head">
+                  <span className="dv-kicker">Câu {round.nth}/3</span>
+                  <h2 className="dv-task">{round.task}</h2>
+                  {(phase === 'brief' || phase === 'timing') && <p className="dv-how">{round.how}</p>}
+                </div>
+                {round.id === 'sort' && <SortBoard round={round} revealed={phase === 'reveal' || phase === 'running'} />}
+                {round.id === 'order' && <OrderBoard round={round} revealed={phase === 'reveal' || phase === 'running'} />}
+                {round.id === 'cloze' && <ClozeBoard round={round} revealed={phase === 'reveal' || phase === 'running'} />}
+              </MotionDiv>
             </section>
 
-            <footer className="pr-controls">
+            <footer className={`pr-controls${phase === 'reveal' ? ' dv-controls-reveal' : ''}`}>
               {phase === 'running' ? (
                 <p className="dv-running">Ngựa đang chạy…</p>
               ) : (
-                <button type="button" className="pr-btn pr-btn-gold pr-btn-wide" onClick={primary}>
-                  {labels[phase]} <kbd>Space</kbd>
-                </button>
+                <>
+                  {phase === 'reveal' && (
+                    <ScoreBar
+                      round={round}
+                      roundIdx={roundIdx}
+                      correct={correct}
+                      setCorrect={setCorrect}
+                      perks={perks}
+                      useDouble={useDouble}
+                      setUseDouble={setUseDouble}
+                      usePlus2={usePlus2}
+                      setUsePlus2={setUsePlus2}
+                      stealTarget={stealTarget}
+                      setStealTarget={setStealTarget}
+                      steps={steps}
+                    />
+                  )}
+                  <button type="button" className="pr-btn pr-btn-gold pr-btn-wide" onClick={primary}>
+                    {labels[phase]} <kbd>Space</kbd>
+                  </button>
+                </>
               )}
             </footer>
 
