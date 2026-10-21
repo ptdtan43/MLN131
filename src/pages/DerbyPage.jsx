@@ -460,16 +460,30 @@ function SortBoard({ round, revealed }) {
 
 function OrderBoard({ round, revealed }) {
   const list = revealed ? [...round.cards].sort((a, b) => a.rank - b.rank) : round.cards
+  const used = round.cards.map((c) => c.year)
   return (
-    <div className="dv-order">
-      {list.map((c, i) => (
-        <MotionDiv layout key={c.letter} className="dv-order-card" transition={{ type: 'spring', stiffness: 110, damping: 16, delay: revealed ? i * 0.1 : 0 }}>
-          <div className="dv-order-year" style={{ opacity: revealed ? 1 : 0 }}>{c.year}</div>
-          <div className="dv-card dv-card-tall">
-            <LetterCard letter={c.letter}>{c.text}</LetterCard>
-          </div>
-        </MotionDiv>
-      ))}
+    <div className="dv-order-wrap">
+      <div className="dv-order">
+        {list.map((c, i) => (
+          <MotionDiv layout key={c.letter} className="dv-order-card" transition={{ type: 'spring', stiffness: 110, damping: 16, delay: revealed ? i * 0.1 : 0 }}>
+            <div className="dv-order-top">
+              <span className="dv-letter">{c.letter}</span>
+              <span className="dv-order-year" style={{ opacity: revealed ? 1 : 0 }}>{c.year}</span>
+            </div>
+            <div className="dv-card dv-card-tall">
+              <span className="dv-card-text">{c.text}</span>
+            </div>
+          </MotionDiv>
+        ))}
+      </div>
+      <div className="dv-bank dv-bank-years">
+        <p className="dv-bank-title">Các năm (một năm không dùng đến)</p>
+        <div className="dv-bank-words">
+          {round.years.map((y) => (
+            <span key={y} className={`dv-bank-word${revealed ? (used.includes(y) ? ' is-used' : ' is-spare') : ''}`}>{y}</span>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
