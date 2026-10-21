@@ -13,13 +13,31 @@ export const MEMBERS = [
 
 /* Nội dung thuyết trình, theo đúng thứ tự trong bảng chấm điểm. */
 export const OUTLINE = [
-  { to: '/mo-dau', title: 'Hoạt động mở đầu', body: 'Trò chơi "Bỏ qua hay kế thừa?", khoảng 5 phút.' },
+  { to: '/mo-dau', title: 'Hoạt động mở đầu', body: 'Picture Rush: đổi hình bắt chữ, khoảng 5 phút. Câu cuối dẫn vào bài.' },
   { to: '/ly-thuyet', title: 'Lý thuyết bài học', body: 'Bỏ qua chế độ tư bản chủ nghĩa; đặc trưng và phương hướng xây dựng CNXH. Tối đa 10 phút.' },
   { to: '/game', title: 'Game ôn tập', body: 'Chiếc nón quá độ: quay số, đoán từ khóa, khoảng 5 phút.' },
   { to: '/hoi-dap', title: 'Hỏi đáp', body: 'Câu hỏi của nhóm phản biện và của giảng viên.' },
 ]
 
-/* Trò chơi mở đầu. answer: 'skip' là bỏ qua, 'keep' là kế thừa. Căn cứ giáo trình tr.111–112. */
+/* Picture Rush (đổi hình bắt chữ), hoạt động mở đầu. Ba câu đố vui không liên quan bài học, câu cuối dẫn vào bài.
+   sprites: tên hình pixel-art trong src/game/pixel.jsx; names: tên từng hình (hiện sau khi có đáp án).
+   Muốn dùng ảnh thật thay hình pixel-art, thêm images: ['img/anh-1.jpg', 'img/anh-2.jpg'] vào câu đố. */
+export const PICTURE_RUSH = {
+  title: 'PICTURE RUSH',
+  subtitle: 'Đổi hình bắt chữ',
+  seconds: 60,
+  autoHints: [40, 25, 12],
+  puzzles: [
+    { sprites: ['moon', 'honey'], names: ['Trăng', 'Mật'], answer: 'TRĂNG MẬT', kind: 'Cụm từ gồm 2 từ' },
+    { sprites: ['star', 'ice'], names: ['Sao', 'Băng'], answer: 'SAO BĂNG', kind: 'Cụm từ gồm 2 từ' },
+    { sprites: ['flame', 'tent'], names: ['Lửa', 'Trại'], answer: 'LỬA TRẠI', kind: 'Cụm từ gồm 2 từ' },
+    { sprites: ['bridge', 'boat'], names: ['Qua', 'Đò'], answer: 'QUÁ ĐỘ', kind: 'Câu cuối: nghe giống nhau', final: true },
+  ],
+  finalTitle: 'QUÁ ĐỘ',
+  finalLead: 'Đúng rồi: "qua đò" nghe giống "quá độ". Hôm nay ta nói về thời kỳ quá độ lên chủ nghĩa xã hội ở Việt Nam.',
+}
+
+/* Trò chơi thẻ "Bỏ qua hay kế thừa?" (trang phụ, không nằm trên menu). answer: 'skip' là bỏ qua, 'keep' là kế thừa. Căn cứ giáo trình tr.111–112. */
 export const OPENING = {
   title: 'Bỏ qua hay kế thừa?',
   how: 'Cả lớp giơ tay chọn. Bạn bấm theo số đông.',

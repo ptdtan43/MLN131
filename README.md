@@ -10,10 +10,12 @@ Phần của nhóm: Chương 3, mục III "Quá độ chủ nghĩa xã hội ở
 | Trang | Việc cần làm khi thuyết trình | Thời lượng gợi ý |
 | --- | --- | --- |
 | Tổng quan | Giới thiệu bài, dẫn vào trò chơi mở đầu | |
-| Mở đầu | Trò chơi "Bỏ qua hay kế thừa?" (6 thẻ, cả lớp giơ tay, bạn bấm theo số đông) | khoảng 5 phút |
+| Mở đầu | **Picture Rush** (đổi hình bắt chữ): 3 câu đố vui, câu cuối "qua đò" → "quá độ" dẫn vào bài. Toàn màn hình 16:9. Phím: Space (cả lớp đoán đúng), H (gợi ý), Enter (hiện đáp án) | khoảng 5 phút |
 | Lý thuyết | Hai phần chính và phần tóm lại. Mỗi phần có mục "Gợi ý nói" để bấm mở | tối đa 10 phút |
 | Game | "Chiếc nón quá độ": quay số, đoán từ khóa theo đội (4 đội) | khoảng 5 phút |
 | Hỏi đáp | Ba câu hỏi cuối Chương 3 và các câu dễ gặp | |
+
+Trang phụ `#/bo-qua-ke-thua` (không có trên menu) là trò thẻ "Bỏ qua hay kế thừa?", dùng khi cần thêm một hoạt động.
 
 Trò chơi không dùng Kahoot hay game giống Kahoot, theo đúng tiêu chí chấm.
 
@@ -30,7 +32,7 @@ Trang dùng địa chỉ dạng `#/ly-thuyet` nên chạy được trên mọi n
 
 ## Sửa nội dung
 
-Toàn bộ chữ nằm trong `src/data/content.js` (thẻ trò chơi mở đầu, lý thuyết, hỏi đáp, thành viên nhóm).
+Toàn bộ chữ nằm trong `src/data/content.js` (câu đố Picture Rush, lý thuyết, hỏi đáp, thành viên nhóm). Hình pixel-art của Picture Rush nằm trong `src/game/pixel.jsx`.
 Câu đố của game nằm trong `src/game/questions.js`. Đáp án viết hoa, không dùng chữ F, J, W, Z.
 
 Điền tên thành viên trong `MEMBERS` ở `src/data/content.js`, trang Tổng quan sẽ tự hiện mục "Nhóm thực hiện".
