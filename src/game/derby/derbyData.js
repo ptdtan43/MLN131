@@ -10,9 +10,9 @@ export const TEAMS = [
 
 /* Quyền lợi: Top 1 của "Đuổi hình bắt chữ" nhận Vé Vàng và tự chọn; Top 2 nhận Vé Bạc và quay ngẫu nhiên. */
 export const PERKS = [
-  { id: 'double', name: 'Nhân đôi', badge: '×2', sprite: 'bolt', desc: 'Chọn một vòng: số bước đội ghi được trong vòng đó được nhân đôi.' },
-  { id: 'plus2', name: 'Tiến thêm 2 bước', badge: '+2', sprite: 'shoe', desc: 'Tiến ngay 2 bước trên đường đua, dùng vào vòng nào cũng được.' },
-  { id: 'steal', name: 'Cướp 1 bước', badge: '−1', sprite: 'magnet', desc: 'Lấy 1 bước của một đội khác, dùng vào vòng nào cũng được.' },
+  { id: 'double', name: 'Nhân đôi', badge: '×2', sprite: 'bolt', desc: 'Chọn một vòng bất kỳ: số bước đội ghi được ở vòng đó được nhân đôi. Dùng một lần.' },
+  { id: 'plus2', name: 'Tiến thêm 2 bước', badge: '+2', sprite: 'shoe', desc: 'Cộng thêm 2 bước vào vòng bạn chọn. Dùng một lần.' },
+  { id: 'steal', name: 'Cướp 1 bước', badge: '−1', sprite: 'magnet', desc: 'Sau khi chấm một vòng, lấy 1 bước của đội đang có bước. Dùng một lần, không dùng được khi chưa đội nào có bước.' },
 ]
 
 export const TRACK_STEPS = 24

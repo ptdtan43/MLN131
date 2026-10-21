@@ -96,8 +96,10 @@
 .dv-perk-use button { height: 42px; padding: 0 20px; border: 0; background: #3a352c; color: var(--cream); font: inherit; font-size: 23px; font-weight: 700; cursor: pointer; }
 .dv-perk-use button.is-on { background: var(--gold); color: #141311; }
 .dv-used { font-size: 22px; color: var(--muted); }
-.dv-steal { position: relative; }
-.dv-steal-menu { position: absolute; left: 0; bottom: 48px; display: flex; gap: 8px; padding: 10px; background: #0f0e0b; z-index: 5; }
+.dv-steal { position: relative; display: flex; align-items: center; gap: 12px; }
+.dv-perk-use button:disabled { opacity: 0.4; cursor: default; }
+.dv-perk-note { font-size: 21px; font-weight: 600; color: var(--muted); }
+.dv-steal-menu { position: absolute; width: max-content; white-space: nowrap; left: 0; bottom: 48px; display: flex; gap: 8px; padding: 10px; background: #0f0e0b; z-index: 5; }
 .dv-steal-menu button { border-bottom: 6px solid var(--team); }
 .dv-steal-menu button:disabled { opacity: 0.3; cursor: default; }
 

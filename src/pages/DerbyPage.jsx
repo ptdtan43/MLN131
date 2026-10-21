@@ -334,7 +334,7 @@ function Ceremony({ onDone }) {
               <Ticket tier="gold" team={t1} />
               <h2 className="dv-modal-title">Mời Top 1 “Đuổi hình bắt chữ” chọn quyền lợi</h2>
               <p className="dv-modal-lead">
-                <strong style={{ color: t1.color }}>{t1.name}</strong> chọn một trong ba quyền lợi. Quyền lợi dùng được một lần trong cuộc đua.
+                <strong style={{ color: t1.color }}>{t1.name}</strong> chọn một trong ba quyền lợi. Quyền lợi chỉ dùng một lần duy nhất, ở vòng do đội tự chọn.
               </p>
               <div className="dv-perks">
                 {PERKS.map((p) => (
@@ -401,7 +401,7 @@ function Track({ steps, perks, galloping, pops, flashLane }) {
               {perk && (
                 <p className={`dv-lane-perk${perk.used ? ' is-used' : ''}`}>
                   <PixelSprite name={perkById(perk.perk).sprite} size={30} />
-                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perkById(perk.perk).badge}</span>
+                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perk.used ? 'đã dùng' : perkById(perk.perk).badge}</span>
                 </p>
               )}
             </div>
@@ -513,10 +513,15 @@ function ClozeBoard({ round, revealed }) {
 }
 
 /* ---------- bảng chấm điểm cho người trình bày ---------- */
-function ScoringPanel({ round, counts, setCounts, perks, useDouble, setUseDouble, usePlus2, setUsePlus2, stealTarget, setStealTarget, steps }) {
+function ScoringPanel({ round, roundIdx, lastRound, counts, setCounts, perks, useDouble, setUseDouble, usePlus2, setUsePlus2, stealTarget, setStealTarget, steps }) {
   const [menu, setMenu] = useState(null)
   const bump = (i, d) => setCounts((c) => c.map((v, k) => (k === i ? Math.max(0, Math.min(round.max, v + d)) : v)))
   const toggle = (setter, i) => setter((arr) => arr.map((v, k) => (k === i ? !v : v)))
+  /* Cướp bước được tính sau khi cộng điểm vòng này, nên số bước có thể cướp là số bước sau vòng. */
+  const projected = steps.map((s, k) => s + counts[k] * (useDouble[k] ? 2 : 1) + (usePlus2[k] ? 2 : 0))
+  const available_for = (target) => projected[target] - stealTarget.filter((t) => t === target).length
+  const canSteal = (i) => TEAMS.some((o) => o.id !== i && available_for(o.id) >= 1)
+  const isOn = (i) => useDouble[i] || usePlus2[i] || stealTarget[i] !== null
   return (
     <div className="dv-scoring">
       <p className="dv-scoring-title">Chấm điểm: mỗi ý đúng là một bước. Tối đa {round.max} bước.</p>
@@ -543,21 +548,27 @@ function ScoringPanel({ round, counts, setCounts, perks, useDouble, setUseDouble
                 )}
                 {available && perk.perk === 'steal' && (
                   <div className="dv-steal">
-                    <button type="button" className={stealTarget[i] !== null ? 'is-on' : ''} onClick={() => (stealTarget[i] !== null ? setStealTarget((a) => a.map((v, k) => (k === i ? null : v))) : setMenu(menu === i ? null : i))}>
+                    <button
+                      type="button"
+                      className={stealTarget[i] !== null ? 'is-on' : ''}
+                      disabled={stealTarget[i] === null && !canSteal(i)}
+                      onClick={() => (stealTarget[i] !== null ? setStealTarget((a) => a.map((v, k) => (k === i ? null : v))) : setMenu(menu === i ? null : i))}
+                    >
                       {stealTarget[i] !== null ? `Cướp của ${TEAMS[stealTarget[i]].name}` : 'Cướp 1 bước'}
                     </button>
+                    {stealTarget[i] === null && !canSteal(i) && <span className="dv-perk-note">Chưa đội nào có bước để cướp</span>}
                     {menu === i && (
                       <div className="dv-steal-menu">
                         {TEAMS.filter((o) => o.id !== i).map((o) => (
-                          <button key={o.id} type="button" disabled={steps[o.id] < 1} style={{ '--team': o.color }} onClick={() => { setStealTarget((a) => a.map((v, k) => (k === i ? o.id : v))); setMenu(null) }}>
-                            {o.name}
+                          <button key={o.id} type="button" disabled={available_for(o.id) < 1} style={{ '--team': o.color }} onClick={() => { setStealTarget((a) => a.map((v, k) => (k === i ? o.id : v))); setMenu(null) }}>
+                            {o.name} · {projected[o.id]} bước
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
                 )}
-                {perk?.used && <span className="dv-used">Đã dùng quyền lợi</span>}
+                {available && roundIdx === lastRound && !isOn(i) && <span className="dv-perk-note">Vòng cuối: dùng hoặc mất quyền lợi</span>}
               </div>
             </div>
           )
@@ -853,6 +864,8 @@ export default function DerbyPage() {
                 phase === 'scoring' ? (
                   <ScoringPanel
                     round={round}
+                    roundIdx={roundIdx}
+                    lastRound={ROUNDS.length - 1}
                     counts={counts}
                     setCounts={setCounts}
                     perks={perks}
