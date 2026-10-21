@@ -3,9 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
-const STAGE_PATHS = ['/game']
+const STAGE_PATHS = ['/chiec-non']
 // Trang toàn màn hình 16:9 (Picture Rush): ẩn thanh menu giấy để nhìn như một màn game.
-const IMMERSIVE_PATHS = ['/mo-dau']
+const IMMERSIVE_PATHS = ['/mo-dau', '/game']
 
 function MainLayout() {
   const { pathname, hash } = useLocation()

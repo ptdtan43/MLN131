@@ -346,6 +346,42 @@ const BUILDERS = {
     })
     return g
   },
+  // Tia chớp (tăng tốc)
+  bolt() {
+    const g = blank()
+    paint(g, (x, y) => {
+      if (!inPolygon(x, y, [[10.6, 0.6], [2.6, 9.2], [7.4, 9.2], [5, 15.4], [13.6, 6.4], [8.8, 6.4], [13, 0.6]])) return null
+      return x + y < 14.5 ? 'p' : 'y'
+    })
+    return g
+  },
+  // Móng ngựa (may mắn)
+  shoe() {
+    const g = blank()
+    paint(g, (x, y) => {
+      const d = Math.hypot(x - 8, y - 8.4)
+      if (d < 3.4 || d > 6.6) return null
+      if (y < 8.6 && Math.abs(x - 8) < 3.2) return null
+      return x + y < 15 ? 'w' : 's'
+    })
+    ;[[3, 9], [4, 12], [12, 12], [13, 9], [4, 5], [12, 5]].forEach(([x, y]) => {
+      if (g[y][x] !== '.') g[y][x] = 'S'
+    })
+    return g
+  },
+  // Nam châm (cướp bước)
+  magnet() {
+    const g = blank()
+    paint(g, (x, y) => {
+      const d = Math.hypot(x - 8, y - 9)
+      if (d < 3.2 || d > 6.4) return null
+      if (y < 9 && Math.abs(x - 8) < 3.2) return null
+      if (y < 5.2) return 'w'
+      return x < 8 ? 'r' : 'R'
+    })
+    paint(g, (x, y) => (inRect(x, y, 1.6, 2.6, 4.8, 5.2) ? 'w' : inRect(x, y, 11.2, 2.6, 14.4, 5.2) ? 's' : null))
+    return g
+  },
   // Thuyền (đò)
   boat() {
     const g = blank()

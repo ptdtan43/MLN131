@@ -4,24 +4,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { PICTURE_RUSH as PR } from '../data/content'
 import { PixelSprite } from '../game/pixel'
 import { setMuted, sfx } from '../game/sfx'
+import { useStageScale } from '../game/stage'
 import './PictureRush.css'
 
 const MotionDiv = motion.div
 const EASE = [0.16, 1, 0.3, 1]
-const STAGE_W = 1920
-const STAGE_H = 1080
 const SEGMENTS = 12
-
-/* Khung hình 16:9 cố định 1920×1080, thu phóng vừa màn hình để bố cục giống nhau trên mọi TV và máy chiếu. */
-function useStageScale() {
-  const [scale, setScale] = useState(() => Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H))
-  useEffect(() => {
-    const fit = () => setScale(Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H))
-    window.addEventListener('resize', fit)
-    return () => window.removeEventListener('resize', fit)
-  }, [])
-  return scale
-}
 
 /* Nền nhiều lớp: sao, dãy nhà xa, dãy nhà gần, mặt đất. Mỗi lớp trôi với tốc độ khác nhau để có chiều sâu. */
 function skyline({ seed, color, min, max, step, windows }) {

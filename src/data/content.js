@@ -15,7 +15,7 @@ export const MEMBERS = [
 export const OUTLINE = [
   { to: '/mo-dau', title: 'Hoạt động mở đầu', body: 'Picture Rush: đổi hình bắt chữ, khoảng 5 phút. Câu cuối dẫn vào bài.' },
   { to: '/ly-thuyet', title: 'Lý thuyết bài học', body: 'Bỏ qua chế độ tư bản chủ nghĩa; đặc trưng và phương hướng xây dựng CNXH. Tối đa 10 phút.' },
-  { to: '/game', title: 'Game ôn tập', body: 'Chiếc nón quá độ: quay số, đoán từ khóa, khoảng 5 phút.' },
+  { to: '/game', title: 'Game ôn tập', body: 'Knowledge Derby: bốn đội đua trên con đường quá độ, khoảng 5 phút. Top 1 và Top 2 phần mở đầu nhận quyền lợi.' },
   { to: '/hoi-dap', title: 'Hỏi đáp', body: 'Câu hỏi của nhóm phản biện và của giảng viên.' },
 ]
 

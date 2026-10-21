@@ -201,7 +201,7 @@
 }
 
 /* Nút bấm */
-.pr-controls { position: absolute; left: 0; right: 0; bottom: 56px; display: flex; justify-content: center; gap: 28px; z-index: 5; }
+.pr-controls { position: absolute; left: 0; right: 0; bottom: 40px; display: flex; justify-content: center; gap: 28px; z-index: 5; }
 .pr-btn {
   position: relative;
   display: inline-flex;
