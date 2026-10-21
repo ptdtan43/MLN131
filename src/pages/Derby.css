@@ -57,10 +57,12 @@
 .dv-order-top { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 6px 0 4px; }
 .dv-order-top .dv-letter { width: auto; font-size: 48px; }
 .dv-bank-years { flex: none; }
-.dv-bank-years .dv-bank-word { padding: 4px 18px; font-size: 26px; }
+.dv-bank-years { padding: 6px 10px; }
+.dv-bank-years .dv-bank-word { padding: 2px 16px; font-size: 25px; }
 .dv-order-card { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .dv-order-year { text-align: right; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 50px; line-height: 48px; color: var(--gold); transition: opacity 0.5s 0.4s; }
-.dv-order .dv-card-tall { font-size: 23px; line-height: 1.25; padding: 10px 16px; }
+.dv-order .dv-card-tall { font-size: 22px; line-height: 1.22; padding: 8px 14px; justify-content: flex-start; gap: 6px; }
+.dv-card-hint { font-size: 19px; font-weight: 600; line-height: 1.2; color: var(--gold); opacity: 0.9; }
 .dv-card-tall { flex: 1; flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 4px; padding: 14px 18px; font-size: 27px; }
 .dv-blank { display: inline-block; min-width: 190px; height: 40px; margin: 0 6px; vertical-align: bottom; background: #0f0e0b; border-bottom: 4px solid var(--gold); text-align: center; }
 .dv-blank-word { display: inline-block; font-weight: 800; color: var(--gold); opacity: 0; transform: rotateX(90deg) translateY(10px); transition: opacity 0.4s var(--d, 0s), transform 0.5s var(--d, 0s); }

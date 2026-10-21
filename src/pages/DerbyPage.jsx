@@ -471,7 +471,8 @@ function OrderBoard({ round, revealed }) {
               <span className="dv-order-year" style={{ opacity: revealed ? 1 : 0 }}>{c.year}</span>
             </div>
             <div className="dv-card dv-card-tall">
-              <span className="dv-card-text">{c.text}</span>
+              <span className="dv-card-text">{c.title}</span>
+              <span className="dv-card-hint">{c.hint}</span>
             </div>
           </MotionDiv>
         ))}

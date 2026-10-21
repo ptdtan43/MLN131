@@ -49,6 +49,16 @@ const sortRound = (nth, text, answer) => ({
   answerLine: answer === 'skip' ? 'Bỏ qua' : 'Kế thừa',
 })
 
+/* Các mốc dùng ở chặng 2. title là sự kiện; hint là bối cảnh để suy ra năm mà không cần nhớ con số. */
+const EVENTS = {
+  1930: { title: 'Đảng ra đời, Cương lĩnh chính trị đầu tiên', hint: 'Trước Cách mạng tháng Tám 1945' },
+  1986: { title: 'Đại hội VI mở đầu công cuộc đổi mới', hint: 'Hơn 10 năm sau khi đất nước thống nhất (1975)' },
+  1991: { title: 'Đại hội VII: Cương lĩnh quá độ lên chủ nghĩa xã hội', hint: 'Sáu đặc trưng; Liên Xô, Đông Âu sụp đổ' },
+  2011: { title: 'Đại hội XI: Cương lĩnh bổ sung, phát triển', hint: 'Tám đặc trưng; tổng kết 25 năm đổi mới' },
+  2021: { title: 'Đại hội XIII: mục tiêu đến 2025, 2030, 2045', hint: 'Tầm nhìn đến 2045, tròn 100 năm lập nước' },
+}
+const ev = (letter, rank, year) => ({ letter, rank, year: String(year), ...EVENTS[year] })
+
 /* Chặng 2: ghép mỗi mốc với năm trong bảng năm cho sẵn (có một năm không dùng đến), rồi xếp theo thứ tự thời gian.
    rank là thứ tự đúng (0 là sớm nhất). */
 const orderRound = (nth, seconds, cards, years) => ({
@@ -81,38 +91,9 @@ export const ROUNDS = [
   sortRound(1, 'Khoa học và công nghệ hiện đại của nhân loại', 'keep'),
   sortRound(2, 'Quan hệ sản xuất tư bản chủ nghĩa giữ vị trí thống trị', 'skip'),
   sortRound(3, 'Những thành tựu nhân loại đạt được dưới chế độ tư bản chủ nghĩa', 'keep'),
-  orderRound(
-    1,
-    35,
-    [
-      { letter: 'A', rank: 2, year: '2011', text: 'Đại hội XI thông qua Cương lĩnh bổ sung, phát triển' },
-      { letter: 'B', rank: 0, year: '1986', text: 'Đại hội VI mở đầu công cuộc đổi mới' },
-      { letter: 'C', rank: 1, year: '1991', text: 'Đại hội VII thông qua Cương lĩnh quá độ lên chủ nghĩa xã hội' },
-    ],
-    ['2011', '2001', '1986', '1991'],
-  ),
-  orderRound(
-    2,
-    35,
-    [
-      { letter: 'A', rank: 1, year: '1991', text: 'Đại hội VII thông qua Cương lĩnh quá độ lên chủ nghĩa xã hội' },
-      { letter: 'B', rank: 2, year: '2021', text: 'Đại hội XIII đặt mục tiêu đến năm 2025, 2030, 2045' },
-      { letter: 'C', rank: 0, year: '1930', text: 'Đảng ra đời, thông qua Cương lĩnh chính trị đầu tiên' },
-    ],
-    ['2016', '1991', '1930', '2021'],
-  ),
-  orderRound(
-    3,
-    50,
-    [
-      { letter: 'A', rank: 3, year: '2011', text: 'Đại hội XI thông qua Cương lĩnh bổ sung, phát triển' },
-      { letter: 'B', rank: 0, year: '1930', text: 'Đảng ra đời, thông qua Cương lĩnh chính trị đầu tiên' },
-      { letter: 'C', rank: 4, year: '2021', text: 'Đại hội XIII đặt mục tiêu đến năm 2025, 2030, 2045' },
-      { letter: 'D', rank: 1, year: '1986', text: 'Đại hội VI mở đầu công cuộc đổi mới' },
-      { letter: 'E', rank: 2, year: '1991', text: 'Đại hội VII thông qua Cương lĩnh quá độ lên chủ nghĩa xã hội' },
-    ],
-    ['2011', '1930', '1996', '2021', '1986', '1991'],
-  ),
+  orderRound(1, 40, [ev('A', 2, 2011), ev('B', 0, 1986), ev('C', 1, 1991)], ['2011', '2001', '1986', '1991']),
+  orderRound(2, 40, [ev('A', 1, 1991), ev('B', 2, 2021), ev('C', 0, 1930)], ['2016', '1991', '1930', '2021']),
+  orderRound(3, 55, [ev('A', 3, 2011), ev('B', 0, 1930), ev('C', 4, 2021), ev('D', 1, 1986), ev('E', 2, 1991)], ['2011', '1930', '1996', '2021', '1986', '1991']),
   clozeRound(1, 'Bỏ qua chế độ tư bản chủ nghĩa là bỏ qua việc xác lập vị trí ', ' của quan hệ sản xuất và kiến trúc thượng tầng tư bản chủ nghĩa.', 'thống trị'),
   clozeRound(2, 'Thời kỳ quá độ có nhiều hình thức sở hữu, nhiều ', ' kinh tế.', 'thành phần'),
   clozeRound(3, 'Việt Nam quá độ ', ' lên chủ nghĩa xã hội, bỏ qua chế độ tư bản chủ nghĩa.', 'gián tiếp'),
