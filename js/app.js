@@ -59,7 +59,11 @@
     void e.offsetWidth;
     e.classList.add('shake');
   }
-  function go(id) { location.hash = '#/' + id; }
+  var shownId = null;
+  function go(id) {
+    try { location.hash = '#/' + id; } catch (e) { /* khung xem có thể chặn đổi địa chỉ */ }
+    if (shownId !== id) show(id);
+  }
 
   /* ---------- ảnh (chỉ hiện khi đã có ảnh thật trong assets/images.js) ---------- */
   function shot(key) {
@@ -424,14 +428,15 @@
 
   /* ---------- điều hướng ---------- */
   var current = 0;
-  function indexFromHash() {
-    var id = (location.hash || '').replace(/^#\//, '') || 'mo-dau';
+  function hashId() { return (location.hash || '').replace(/^#\//, '') || 'mo-dau'; }
+  function indexFromId(id) {
     for (var i = 0; i < screens.length; i++) if (screens[i].id === id) return i;
     return 0;
   }
-  function show() {
-    current = indexFromHash();
+  function show(forcedId) {
+    current = indexFromId(forcedId || hashId());
     var s = screens[current];
+    shownId = s.id;
     document.body.setAttribute('data-field', s.field);
     document.body.classList.toggle('no-bar', !s.bar);
     stage.textContent = '';
@@ -481,10 +486,10 @@
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { step(-1); }
     else if (e.key === 'n' || e.key === 'N') { if (screens[current].bar) notesBtn.click(); }
     else if (e.key === 'f' || e.key === 'F') {
-      if (document.fullscreenElement) document.exitFullscreen();
-      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+      if (document.fullscreenElement) document.exitFullscreen().catch(function () {});
+      else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function () {});
     }
   });
-  window.addEventListener('hashchange', show);
+  window.addEventListener('hashchange', function () { if (hashId() !== shownId) show(); });
   show();
 })();

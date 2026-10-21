@@ -46,9 +46,9 @@ button { font: inherit; color: inherit; }
 
 /* Thanh trên */
 .top {
-  position: fixed; z-index: 20; inset: 0 0 auto 0; height: var(--top-h);
+  position: fixed; z-index: 20; inset: 0 0 auto 0; height: calc(var(--top-h) + env(safe-area-inset-top, 0px));
   display: flex; align-items: center; justify-content: space-between;
-  padding: 0 var(--m); background: var(--bg);
+  padding: env(safe-area-inset-top, 0px) var(--m) 0; background: var(--bg);
   transition: background-color 0.5s var(--ease);
 }
 .mark { font-weight: 800; font-size: var(--step-small); text-decoration: none; }
@@ -177,6 +177,7 @@ h2.head { font-size: var(--step-head); }
 .bar { position: fixed; z-index: 20; inset: auto 0 0 0; background: var(--bg); transition: background-color 0.5s var(--ease); }
 .bar[hidden] { display: none; }
 .bar-fill { height: 6px; background: var(--ink); width: 0; transition: width 0.4s var(--ease); }
+.bar { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .bar-row { height: calc(var(--bar-h) - 6px); display: flex; align-items: center; gap: 12px; padding: 0 var(--m); }
 .bar-title { flex: 1; font-size: var(--step-small); font-weight: 700; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
