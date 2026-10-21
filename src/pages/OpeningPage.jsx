@@ -334,13 +334,17 @@ export default function OpeningPage() {
               </p>
 
               <div className="pr-picture-row">
-                {puzzle.sprites.map((name, i) => (
-                  <div className="pr-picture-wrap" key={name}>
+                {(puzzle.images ?? puzzle.sprites).map((item, i, list) => (
+                  <div className="pr-picture-wrap" key={item}>
                     <div className="pr-box pr-picture">
-                      <PixelSprite name={name} size={340} className={playing ? 'pr-bob' : ''} />
+                      {puzzle.images ? (
+                        <img className="pr-photo" src={item} alt={ended ? puzzle.names[i] : 'Hình đố'} />
+                      ) : (
+                        <PixelSprite name={item} size={340} className={playing ? 'pr-bob' : ''} />
+                      )}
                     </div>
                     <p className={`pr-caption${ended ? ' is-shown' : ''}`}>{puzzle.names[i]}</p>
-                    {i < puzzle.sprites.length - 1 && <span className="pr-plus" aria-hidden="true">+</span>}
+                    {i < list.length - 1 && <span className="pr-plus" aria-hidden="true">+</span>}
                   </div>
                 ))}
               </div>

@@ -131,6 +131,7 @@
 .pr-picture-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
 .pr-picture { width: 400px; height: 400px; display: grid; place-items: center; }
 .pr-picture svg { position: relative; display: block; }
+.pr-photo { position: relative; display: block; width: 372px; height: 372px; object-fit: cover; }
 .pr-plus {
   position: absolute;
   right: -112px;
