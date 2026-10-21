@@ -22,7 +22,17 @@ function Photo({ name, className = '' }) {
   return (
     <figure className={`theory-photo ${className}`}>
       <img className="theory-image" src={d.file} alt={d.alt ?? ''} loading="lazy" decoding="async" />
-      {caption && <figcaption>{caption}</figcaption>}
+      {caption && (
+        <figcaption>
+          {caption}
+          {d.source && (
+            <>
+              {' · '}
+              <a href={d.source} target="_blank" rel="noreferrer">Nguồn</a>
+            </>
+          )}
+        </figcaption>
+      )}
     </figure>
   )
 }
@@ -57,7 +67,7 @@ export default function TheoryPage() {
         </nav>
       </header>
 
-      <Section id="01" title="Quá độ lên chủ nghĩa xã hội bỏ qua chế độ tư bản chủ nghĩa">
+      <Section id="01" title="Đặc điểm quá độ lên chủ nghĩa xã hội ở Việt Nam là bỏ qua chế độ tư bản chủ nghĩa">
         <div className={`role-feature${hasPhoto ? '' : ' no-photo'}`}>
           <Photo name="khoi-dau" />
           <figure className="unity-quote">
@@ -130,7 +140,7 @@ export default function TheoryPage() {
         <Notes items={T.notes.one} />
       </Section>
 
-      <Section id="02" title="Đặc trưng và phương hướng xây dựng chủ nghĩa xã hội ở Việt Nam hiện nay">
+      <Section id="02" title="Những đặc trưng của chủ nghĩa xã hội và phương hướng xây dựng chủ nghĩa xã hội ở Việt Nam hiện nay">
         <p className="section-description">Nhận thức của Đảng về chủ nghĩa xã hội và con đường đi lên ngày càng sáng rõ qua các kỳ đại hội.</p>
         <div className="awareness-layout">
           <ol className="method-flow">
@@ -148,14 +158,14 @@ export default function TheoryPage() {
           <Photo name="doi-moi" className="awareness-photo" />
         </div>
 
-        <h3 className="block-heading">Tám đặc trưng của chủ nghĩa xã hội Việt Nam</h3>
+        <h3 className="block-heading">a) Những đặc trưng bản chất của chủ nghĩa xã hội ở Việt Nam</h3>
         <ul className="trait-grid">
           {T.traits.map(([title, body]) => (
             <li key={title}><strong>{title}</strong><p>{body}</p></li>
           ))}
         </ul>
 
-        <h3 className="block-heading">Tám phương hướng xây dựng chủ nghĩa xã hội</h3>
+        <h3 className="block-heading">b) Phương hướng xây dựng chủ nghĩa xã hội ở Việt Nam hiện nay</h3>
         <ol className="principles-list">
           {T.directions.map(([title, body], index) => (
             <li key={title}>

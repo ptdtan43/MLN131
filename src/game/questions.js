@@ -1,8 +1,8 @@
 // Ô chữ cho game "Chiếc nón quá độ". Đáp án viết hoa, không dùng chữ F, J, W, Z (bàn phím game không có các chữ này).
 // Căn cứ: giáo trình Chương 3, mục III (tr.109–124) và slide giảng viên.
 export const PART_TITLES = {
-  1: 'Quá độ lên CNXH bỏ qua chế độ tư bản chủ nghĩa',
-  2: 'Đặc trưng và phương hướng xây dựng CNXH ở Việt Nam',
+  1: 'Đặc điểm quá độ lên CNXH ở Việt Nam là bỏ qua chế độ tư bản chủ nghĩa',
+  2: 'Những đặc trưng của CNXH và phương hướng xây dựng CNXH ở Việt Nam hiện nay',
 }
 
 export const QUESTIONS = [
@@ -39,7 +39,7 @@ export const QUESTIONS = [
     hint: 'Loại quá độ dành cho nước chưa qua chủ nghĩa tư bản phát triển, như Việt Nam.',
     part: 1,
     explanation:
-      'Quá độ gián tiếp dành cho nước chưa trải qua chủ nghĩa tư bản phát triển. Việt Nam thuộc loại này, còn quá độ trực tiếp đến nay chưa từng diễn ra.',
+      'Quá độ gián tiếp dành cho nước chưa trải qua chủ nghĩa tư bản phát triển. Việt Nam thuộc loại này, còn quá độ trực tiếp trên thực tế chưa có nước nào đi theo.',
   },
   {
     answer: 'THÀNH PHẦN KINH TẾ',
@@ -53,7 +53,7 @@ export const QUESTIONS = [
     hint: 'Hình thức phân phối vẫn giữ vai trò chủ đạo trong thời kỳ quá độ.',
     part: 1,
     explanation:
-      'Thời kỳ quá độ còn nhiều hình thức phân phối. Ngoài phân phối theo lao động vẫn là chủ đạo còn có phân phối theo mức đóng góp vốn và phúc lợi xã hội.',
+      'Thời kỳ quá độ còn nhiều hình thức phân phối. Ngoài phân phối theo lao động vẫn là chủ đạo còn có phân phối theo mức độ đóng góp và quỹ phúc lợi xã hội.',
   },
   {
     answer: 'BIẾN ĐỔI VỀ CHẤT',
@@ -65,7 +65,7 @@ export const QUESTIONS = [
   {
     answer: 'CƯƠNG LĨNH',
     hint: 'Văn kiện năm 1930 của Đảng đã xác định: sau cách mạng dân tộc dân chủ nhân dân sẽ tiến lên chủ nghĩa xã hội.',
-    part: 2,
+    part: 1,
     explanation:
       'Cương lĩnh năm 1930 của Đảng chỉ rõ: sau khi hoàn thành cách mạng dân tộc dân chủ nhân dân sẽ tiến lên chủ nghĩa xã hội.',
   },

@@ -8,10 +8,18 @@ function QABlock({ block }) {
       </h2>
       <div className="flex flex-col gap-6 lg:col-span-8 lg:columns-2 lg:gap-x-12 lg:block lg:[column-gap:3rem]">
         {block.items.map(([question, answer]) => (
-          <p key={question} className="text-lg leading-[1.7] text-ink-soft lg:mb-7 lg:break-inside-avoid lg:text-xl">
-            <span className="mr-1.5 font-semibold text-ink">{question}</span>
-            {answer}
-          </p>
+          <div key={question} className="text-lg leading-[1.7] text-ink-soft lg:mb-7 lg:break-inside-avoid lg:text-xl">
+            <p className="font-semibold text-ink">{question}</p>
+            {Array.isArray(answer) ? (
+              <ul className="mt-2 list-disc space-y-1.5 pl-6 marker:text-accent">
+                {answer.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-1">{answer}</p>
+            )}
+          </div>
         ))}
       </div>
     </section>

@@ -52,8 +52,8 @@ export const THEORY = {
   kinds: [
     { title: 'Từ quá độ nói chung đến Việt Nam',
       points: [
-        'Quá độ trực tiếp: dành cho nước đã trải qua chủ nghĩa tư bản phát triển. Cho đến nay chưa từng diễn ra.',
-        'Quá độ gián tiếp: dành cho nước chưa qua chủ nghĩa tư bản phát triển. Liên Xô, Đông Âu trước đây, Trung Quốc, Việt Nam đều đi con đường này.',
+        'Quá độ trực tiếp: dành cho nước đã trải qua chủ nghĩa tư bản phát triển. Trên thực tế chưa có nước nào đi theo con đường này.',
+        'Quá độ gián tiếp: dành cho nước chưa qua chủ nghĩa tư bản phát triển. Việt Nam đi con đường này.',
         'Việt Nam thuộc loại gián tiếp.',
       ] },
     { title: 'Ba điều làm nên điểm xuất phát',
@@ -84,9 +84,9 @@ export const THEORY = {
   ],
 
   mixed: [
-    { label: 'Sở hữu', role: 'Nhiều hình thức', body: 'Sở hữu tư nhân tư bản chủ nghĩa không giữ vai trò chủ đạo.' },
+    { label: 'Sở hữu', role: 'Nhiều hình thức', body: 'Sở hữu tư nhân và kinh tế tư nhân tư bản chủ nghĩa không giữ vai trò chủ đạo.' },
     { label: 'Kinh tế', role: 'Nhiều thành phần', body: 'Nhiều thành phần kinh tế cùng tồn tại, nhưng thành phần tư nhân tư bản chủ nghĩa không giữ vai trò chủ đạo.' },
-    { label: 'Phân phối', role: 'Theo lao động là chủ đạo', body: 'Bên cạnh đó còn phân phối theo mức đóng góp vốn và phúc lợi xã hội.' },
+    { label: 'Phân phối', role: 'Theo lao động là chủ đạo', body: 'Bên cạnh đó còn phân phối theo mức độ đóng góp và quỹ phúc lợi xã hội.' },
     { label: 'Bóc lột', role: 'Còn, nhưng không thống trị', body: 'Vẫn còn quan hệ bóc lột và bị bóc lột, nhưng nó không giữ vai trò thống trị.' },
   ],
   mixedSummary: 'Có thể cùng tồn tại, nhưng tư bản chủ nghĩa không còn là cái thống trị.',
@@ -189,12 +189,20 @@ export const QA = {
   exam: {
     title: 'Ba câu hỏi cuối Chương 3',
     items: [
-      ['Phân tích điều kiện ra đời và những đặc trưng của chủ nghĩa xã hội. Liên hệ thực tiễn Việt Nam?',
-        'Điều kiện kinh tế: lực lượng sản xuất xã hội hóa cao mâu thuẫn với quan hệ sản xuất tư nhân tư bản chủ nghĩa. Điều kiện chính trị – xã hội: giai cấp công nhân đối lập giai cấp tư sản, trưởng thành và có Đảng Cộng sản lãnh đạo. Đặc trưng: giải phóng con người; kinh tế phát triển cao, công hữu về tư liệu sản xuất chủ yếu; nhân dân lao động làm chủ; nhà nước kiểu mới; văn hóa phát triển cao; bình đẳng giữa các dân tộc, hữu nghị với các nước. Liên hệ: tám đặc trưng của chủ nghĩa xã hội Việt Nam.'],
-      ['Phân tích tính tất yếu, đặc điểm của thời kỳ quá độ lên chủ nghĩa xã hội. Liên hệ thực tiễn ở Việt Nam?',
-        'Tính tất yếu: giữa chủ nghĩa tư bản và chủ nghĩa cộng sản có một thời kỳ cải biến cách mạng (C. Mác); cần thời gian để cải tạo xã hội cũ, xây dựng xã hội mới. Hai loại quá độ: trực tiếp và gián tiếp. Đặc điểm: kinh tế nhiều thành phần (V.I. Lênin nêu năm thành phần); chính trị có chuyên chính vô sản; tư tưởng – văn hóa có nhiều tư tưởng cùng tồn tại; xã hội còn nhiều giai cấp, tầng lớp vừa hợp tác vừa đấu tranh. Liên hệ: Việt Nam quá độ gián tiếp, bỏ qua chế độ tư bản chủ nghĩa.'],
+      ['Phân tích điều kiện ra đời và những đặc trưng của chủ nghĩa xã hội? Liên hệ với thực tiễn Việt Nam?',
+        ['Điều kiện kinh tế: lực lượng sản xuất xã hội hóa cao mâu thuẫn với quan hệ sản xuất tư nhân tư bản chủ nghĩa.',
+         'Điều kiện chính trị – xã hội: giai cấp công nhân đối lập giai cấp tư sản, trưởng thành và có Đảng Cộng sản lãnh đạo.',
+         'Đặc trưng: giải phóng con người; kinh tế phát triển cao, công hữu về tư liệu sản xuất chủ yếu; nhân dân lao động làm chủ; nhà nước kiểu mới; văn hóa phát triển cao; bình đẳng giữa các dân tộc, hữu nghị với các nước.',
+         'Liên hệ: tám đặc trưng của chủ nghĩa xã hội Việt Nam.']],
+      ['Phân tích tính tất yếu, đặc điểm của thời kỳ quá độ lên chủ nghĩa xã hội? Liên hệ thực tiễn ở Việt Nam?',
+        ['Tính tất yếu: giữa chủ nghĩa tư bản và chủ nghĩa cộng sản có một thời kỳ cải biến cách mạng (C. Mác); cần thời gian để cải tạo xã hội cũ, xây dựng xã hội mới.',
+         'Hai loại quá độ: trực tiếp và gián tiếp.',
+         'Đặc điểm: kinh tế nhiều thành phần (V.I. Lênin nêu năm thành phần); chính trị có chuyên chính vô sản; tư tưởng – văn hóa có nhiều tư tưởng cùng tồn tại; xã hội còn nhiều giai cấp, tầng lớp vừa hợp tác vừa đấu tranh.',
+         'Liên hệ: Việt Nam quá độ gián tiếp, bỏ qua chế độ tư bản chủ nghĩa.']],
       ['Phân tích luận điểm của Đảng Cộng sản Việt Nam về con đường đi lên chủ nghĩa xã hội của nước ta là sự phát triển quá độ lên chủ nghĩa xã hội bỏ qua chế độ tư bản chủ nghĩa?',
-        'Đây là lựa chọn dứt khoát và đúng đắn của Đảng: đáp ứng nguyện vọng thiết tha của dân tộc, phản ánh xu thế của thời đại, phù hợp quan điểm của chủ nghĩa Mác – Lênin. Bỏ qua việc xác lập vị trí thống trị của quan hệ sản xuất và kiến trúc thượng tầng tư bản chủ nghĩa, nhưng tiếp thu thành tựu nhân loại. Gồm bốn nội dung: tất yếu khách quan; bỏ qua sự thống trị của tư bản; kế thừa thành tựu nhân loại; biến đổi về chất, lâu dài và nhiều chặng.'],
+        ['Đây là lựa chọn dứt khoát và đúng đắn của Đảng: đáp ứng nguyện vọng thiết tha của dân tộc, phản ánh xu thế của thời đại, phù hợp quan điểm của chủ nghĩa Mác – Lênin.',
+         'Bỏ qua việc xác lập vị trí thống trị của quan hệ sản xuất và kiến trúc thượng tầng tư bản chủ nghĩa, nhưng tiếp thu thành tựu nhân loại.',
+         'Gồm bốn nội dung: tất yếu khách quan; bỏ qua sự thống trị của tư bản; kế thừa thành tựu nhân loại; biến đổi về chất, lâu dài và nhiều chặng.']],
     ],
   },
   more: {
@@ -207,7 +215,7 @@ export const QA = {
       ['Vì sao nói đây là lựa chọn duy nhất đúng?',
         'Vì nó đáp ứng nguyện vọng thiết tha của dân tộc, phản ánh xu thế của thời đại, phù hợp quan điểm khoa học, cách mạng và sáng tạo của chủ nghĩa Mác – Lênin, và đúng quy luật phát triển khách quan của cách mạng Việt Nam.'],
       ['Quá độ trực tiếp và quá độ gián tiếp khác nhau thế nào?',
-        'Trực tiếp: dành cho nước đã qua chủ nghĩa tư bản phát triển, cho đến nay chưa từng diễn ra. Gián tiếp: dành cho nước chưa qua chủ nghĩa tư bản phát triển, Việt Nam thuộc loại này.'],
+        'Trực tiếp: dành cho nước đã qua chủ nghĩa tư bản phát triển, trên thực tế chưa có nước nào đi theo con đường này. Gián tiếp: dành cho nước chưa qua chủ nghĩa tư bản phát triển, Việt Nam thuộc loại này.'],
       ['Vì sao thời kỳ quá độ ở nước ta kéo dài?',
         'Vì đó là sự biến đổi về chất của xã hội trên mọi lĩnh vực, rất khó khăn, phức tạp, đi qua nhiều chặng đường và nhiều hình thức tổ chức kinh tế – xã hội mang tính quá độ.'],
       ['Quan điểm đi lên chủ nghĩa xã hội của Đảng có từ khi nào?',
@@ -227,4 +235,21 @@ export const QA = {
      license: 'Giấy phép (ví dụ CC BY-SA 4.0 hoặc Public domain)',
    }
    Khóa dùng trong trang: 'khoi-dau' (phần 01, bên cạnh câu kết luận), 'doi-moi' (phần 02, bên cạnh nhận thức qua các đại hội). */
-export const IMAGES = {}
+export const IMAGES = {
+  'khoi-dau': {
+    file: 'img/quoc-ky-lang-bac.jpg',
+    alt: 'Quốc kỳ đỏ sao vàng trước Lăng Chủ tịch Hồ Chí Minh ở Quảng trường Ba Đình, Hà Nội',
+    caption: 'Quốc kỳ trước Lăng Chủ tịch Hồ Chí Minh, Quảng trường Ba Đình, Hà Nội',
+    credit: 'Rosino',
+    source: 'https://commons.wikimedia.org/wiki/File:Flag_of_Vietnam_in_front_of_Ho_Chi_Minh_mausoleum.jpg',
+    license: 'CC BY-SA 2.0 (đã thu nhỏ, hiển thị cắt khung)',
+  },
+  'doi-moi': {
+    file: 'img/sai-gon-ban-dem.jpg',
+    alt: 'Các tòa nhà cao tầng và tòa Landmark 81 ven sông Sài Gòn lúc chiều tối',
+    caption: 'Thành phố Hồ Chí Minh ven sông Sài Gòn, 2023',
+    credit: 'Radek Kucharski',
+    source: 'https://commons.wikimedia.org/wiki/File:Saigon_at_Blue_Hour.jpg',
+    license: 'CC BY 2.0 (đã thu nhỏ)',
+  },
+}
