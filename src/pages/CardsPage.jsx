@@ -88,10 +88,10 @@ export default function OpeningPage() {
           <p className="max-w-[34em] text-xl leading-relaxed text-cream-muted lg:text-3xl">{OPENING.endLead}</p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
             <Link
-              to="/ly-thuyet"
+              to="/game"
               className="inline-flex items-center gap-3 bg-gold px-7 py-4 text-lg font-bold tracking-[0.06em] text-stage uppercase transition hover:brightness-110 active:scale-[0.98] lg:px-9 lg:py-5 lg:text-xl"
             >
-              Vào bài
+              Sang game
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M5 12h14" />
                 <path d="M13 6l6 6-6 6" />

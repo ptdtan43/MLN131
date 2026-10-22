@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { PICTURE_RUSH as PR } from '../data/content'
+import { TEAMS } from '../game/derby/derbyData'
+import { clearTops, saveTops } from '../game/derby/tops'
 import { PixelSprite } from '../game/pixel'
 import { setMuted, sfx } from '../game/sfx'
 import { useStageScale } from '../game/stage'
@@ -118,7 +120,7 @@ function Hud({ index, total, seconds, urgent, muted, onMute, showTimer }) {
             {muted ? <path d="M16 9l5 6M21 9l-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />}
           </svg>
         </button>
-        <Link to="/ly-thuyet" className="pr-skip">Vào bài ngay</Link>
+        <Link to="/game" className="pr-skip">Sang game</Link>
       </div>
     </header>
   )
@@ -189,15 +191,164 @@ function Curtain({ id }) {
   )
 }
 
+/* Màn dẫn vào bài: hiện lại đáp án của câu cuối ("QUA ĐÒ"), rồi các chữ có dấu lật thành "QUÁ ĐỘ" (nghe gần giống nhau).
+   from và to phải có cùng số ký tự để từng chữ đối chiếu với nhau. */
+function FinalScreen({ from, to, lead, onNext }) {
+  const [morphed, setMorphed] = useState(false)
+  const fromChars = [...from]
+
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setMorphed(true)
+      sfx.land()
+    }, 2800)
+    return () => clearTimeout(id)
+  }, [])
+
+  return (
+    <MotionDiv className="pr-final" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
+      <MotionDiv className="pr-bar pr-bar-top" initial={{ y: -140 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE }} />
+      <MotionDiv className="pr-bar pr-bar-bottom" initial={{ y: 140 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE }} />
+      <div className="pr-final-sprites" aria-hidden="true">
+        <PixelSprite name="bridge" size={130} />
+        <PixelSprite name="boat" size={130} className="pr-bob pr-bob-b" />
+      </div>
+      <h1 className="pr-final-title" aria-label={morphed ? to : from}>
+        {[...to].map((ch, i) => {
+          const was = fromChars[i]
+          const changed = was !== ch
+          const shown = morphed ? ch : was
+          const flipping = morphed && changed
+          return (
+            <MotionDiv
+              key={changed ? `${i}-${shown}` : i}
+              className={`pr-final-letter${flipping ? ' is-changed' : ''}`}
+              initial={flipping ? { opacity: 0, rotateX: -90, scale: 1.15 } : { opacity: 0, y: 80, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
+              transition={flipping ? { duration: 0.6, ease: EASE } : { delay: 0.5 + i * 0.12, duration: 0.6, ease: EASE }}
+            >
+              {shown === ' ' ? ' ' : shown}
+            </MotionDiv>
+          )
+        })}
+      </h1>
+      <MotionDiv
+        className="pr-final-lower"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: morphed ? 1 : 0, y: morphed ? 0 : 24 }}
+        transition={{ delay: morphed ? 0.6 : 0, duration: 0.6, ease: EASE }}
+        style={{ pointerEvents: morphed ? 'auto' : 'none' }}
+      >
+        <p className="pr-final-lead">{lead}</p>
+        <button type="button" className="pr-btn pr-btn-gold pr-btn-xl" tabIndex={morphed ? 0 : -1} onClick={onNext}>
+          Xem Top 1, Top 2
+        </button>
+      </MotionDiv>
+    </MotionDiv>
+  )
+}
+
+/* Bảng điểm các đội. Khi hiện đáp án, người trình bày chạm (hoặc bấm phím 1 đến 5) vào đội giơ tay trả lời đúng; điểm cộng khi sang câu tiếp. */
+function ScoreRow({ scores, correct, interactive, onToggle }) {
+  return (
+    <div className={`pr-scorebar${interactive ? ' is-live' : ''}`} role="group" aria-label={interactive ? 'Chấm điểm: chạm vào đội trả lời đúng' : 'Điểm các đội'}>
+      {TEAMS.map((t, i) => (
+        <div key={t.id} className={`pr-chip${interactive && correct[i] ? ' is-right' : ''}`} style={{ '--team': t.color }}>
+          <div className="pr-chip-top">
+            <span className="pr-chip-name">{t.name}</span>
+            <span className="pr-chip-total">{scores[i] + (interactive && correct[i] ? 1 : 0)}</span>
+          </div>
+          {interactive && (
+            <button type="button" className="pr-chip-mark" aria-pressed={correct[i]} onClick={() => onToggle(i)}>
+              <kbd>{i + 1}</kbd>
+              {correct[i] ? 'Đúng +1' : 'Sai'}
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* Màn xếp hạng cuối phần mở đầu: tự tìm Top 1 (Vé Vàng) và Top 2 (Vé Bạc). Chỉ khi đồng điểm mới phải chọn tay trong số đội đồng điểm. */
+function Ranking({ scores, onGo, onReplay }) {
+  const [pick1, setPick1] = useState(null)
+  const [pick2, setPick2] = useState(null)
+  const ids = TEAMS.map((t) => t.id)
+  const best = (pool) => {
+    const top = Math.max(...pool.map((i) => scores[i]))
+    return pool.filter((i) => scores[i] === top)
+  }
+  const cand1 = best(ids)
+  const top1 = cand1.length === 1 ? cand1[0] : pick1
+  const cand2 = top1 === null ? [] : best(ids.filter((i) => i !== top1))
+  const top2 = top1 === null ? null : cand2.length === 1 ? cand2[0] : pick2
+  const order = [...ids].sort((a, b) => scores[b] - scores[a] || a - b)
+  const maxScore = Math.max(1, ...scores)
+  const ready = top1 !== null && top2 !== null
+
+  const ticket = (tier, teamId) => (
+    <div className={`pr-ticket ${tier}`}>
+      <p className="pr-ticket-title">{tier === 'gold' ? 'VÉ VÀNG · TOP 1' : 'VÉ BẠC · TOP 2'}</p>
+      <p className="pr-ticket-team" style={teamId !== null ? undefined : { opacity: 0.45 }}>{teamId !== null ? TEAMS[teamId].name : 'Chọn đội'}</p>
+      <span className="pr-ticket-stripe" style={{ background: teamId !== null ? TEAMS[teamId].color : 'transparent' }} />
+    </div>
+  )
+
+  const choose = (label, candidates, onPick) => (
+    <div className="pr-choose">
+      <p>{label}</p>
+      <div className="pr-choose-teams">
+        {candidates.map((i) => (
+          <button key={i} type="button" className="pr-choose-chip" style={{ '--team': TEAMS[i].color }} onClick={() => onPick(i)}>
+            {TEAMS[i].name}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+
+  return (
+    <MotionDiv className="pr-rank" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      <h2 className="pr-rank-title">BẢNG XẾP HẠNG</h2>
+      <div className="pr-tops">
+        {ticket('gold', top1)}
+        {ticket('silver', top2)}
+      </div>
+      {top1 === null && choose('Đồng điểm hạng nhất: chọn đội nhận Vé Vàng', cand1, (i) => { setPick1(i); setPick2(null) })}
+      {top1 !== null && top2 === null && choose('Đồng điểm: chọn đội nhận Vé Bạc', cand2, setPick2)}
+      <ol className="pr-standings">
+        {order.map((i) => (
+          <li key={i} style={{ '--team': TEAMS[i].color }} className={i === top1 || i === top2 ? 'is-top' : ''}>
+            <span className="pr-standing-name">{TEAMS[i].name}</span>
+            <span className="pr-standing-bar"><i style={{ width: `${(scores[i] / maxScore) * 100}%` }} /></span>
+            <span className="pr-standing-score">{scores[i]}</span>
+          </li>
+        ))}
+      </ol>
+      <div className="pr-rank-actions">
+        <button type="button" className="pr-btn pr-btn-gold pr-btn-xl" disabled={!ready} onClick={() => onGo(top1, top2)}>
+          Sang game
+        </button>
+        <button type="button" className="pr-btn pr-btn-ghost" onClick={onReplay}>Chơi lại</button>
+      </div>
+    </MotionDiv>
+  )
+}
+
 export default function OpeningPage() {
   const scale = useStageScale()
+  const navigate = useNavigate()
   const puzzles = PR.puzzles
-  const [phase, setPhase] = useState('intro') // intro | play | revealed | final
+  const [phase, setPhase] = useState('intro') // intro | play | revealed | final | ranking
   const [index, setIndex] = useState(0)
   const [seconds, setSeconds] = useState(PR.seconds)
   const [revealed, setRevealed] = useState([])
   const [muted, setMutedState] = useState(false)
   const [curtainId, setCurtainId] = useState(0)
+  const [scores, setScores] = useState(() => TEAMS.map(() => 0))
+  const [correct, setCorrect] = useState(() => TEAMS.map(() => false))
+  const toggleCorrect = useCallback((i) => setCorrect((arr) => arr.map((v, k) => (k === i ? !v : v))), [])
 
   const puzzle = puzzles[index]
   const letters = useMemo(() => [...puzzle.answer.replace(/ /g, '')], [puzzle])
@@ -216,7 +367,7 @@ export default function OpeningPage() {
     })
   }, [letters])
 
-  // Hết giờ (hoặc bấm hiện sớm): lật đáp án để ghi điểm cho đội viết đúng.
+  // Hết giờ (hoặc bấm hiện sớm): lật đáp án để ghi điểm cho đội đọc đúng.
   const showAnswer = useCallback(() => {
     setPhase('revealed')
     sfx.solve()
@@ -227,10 +378,16 @@ export default function OpeningPage() {
     setIndex(0)
     setSeconds(PR.seconds)
     setRevealed([])
+    setScores(TEAMS.map(() => 0))
+    setCorrect(TEAMS.map(() => false))
+    clearTops()
     setCurtainId((n) => n + 1)
   }, [])
 
   const next = useCallback(() => {
+    /* Cộng điểm cho các đội vừa được chấm đúng rồi mới sang câu sau. */
+    setScores((cur) => cur.map((s, i) => s + (correct[i] ? 1 : 0)))
+    setCorrect(TEAMS.map(() => false))
     if (index + 1 >= puzzles.length) {
       setPhase('final')
       setCurtainId((n) => n + 1)
@@ -242,7 +399,7 @@ export default function OpeningPage() {
     setSeconds(PR.seconds)
     setRevealed([])
     setCurtainId((n) => n + 1)
-  }, [index, puzzles.length])
+  }, [index, puzzles.length, correct])
 
   useEffect(() => {
     if (!playing) return undefined
@@ -271,10 +428,11 @@ export default function OpeningPage() {
       else if (playing && (e.key === 'h' || e.key === 'H')) { revealOne(); sfx.land() }
       else if (playing && go) { e.preventDefault(); showAnswer() }
       else if (revealedAnswer && go) { e.preventDefault(); next() }
+      else if (revealedAnswer && /^[1-9]$/.test(e.key) && Number(e.key) <= TEAMS.length) toggleCorrect(Number(e.key) - 1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, playing, revealedAnswer, start, next, showAnswer, revealOne])
+  }, [phase, playing, revealedAnswer, start, next, showAnswer, revealOne, toggleCorrect])
 
   const style = { transform: `translate(-50%, -50%) scale(${scale})` }
 
@@ -289,7 +447,7 @@ export default function OpeningPage() {
           urgent={playing && seconds <= 10}
           muted={muted}
           onMute={() => setMutedState((m) => !m)}
-          showTimer={phase !== 'intro' && phase !== 'final'}
+          showTimer={phase !== 'intro' && phase !== 'final' && phase !== 'ranking'}
         />
 
         <AnimatePresence mode="wait">
@@ -338,30 +496,28 @@ export default function OpeningPage() {
           )}
 
           {phase === 'final' && (
-            <MotionDiv key="final" className="pr-final" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-              <MotionDiv className="pr-bar pr-bar-top" initial={{ y: -140 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE }} />
-              <MotionDiv className="pr-bar pr-bar-bottom" initial={{ y: 140 }} animate={{ y: 0 }} transition={{ duration: 0.8, ease: EASE }} />
-              <div className="pr-final-sprites" aria-hidden="true">
-                <PixelSprite name="bridge" size={130} />
-                <PixelSprite name="boat" size={130} className="pr-bob pr-bob-b" />
-              </div>
-              <h1 className="pr-final-title" aria-label={PR.finalTitle}>
-                {[...PR.finalTitle].map((ch, i) => (
-                  <MotionDiv key={i} className="pr-final-letter" initial={{ opacity: 0, y: 80, scale: 0.8 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: 0.5 + i * 0.12, duration: 0.6, ease: EASE }}>
-                    {ch === ' ' ? ' ' : ch}
-                  </MotionDiv>
-                ))}
-              </h1>
-              <MotionDiv initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.6, ease: EASE }} className="pr-final-lower">
-                <p className="pr-final-lead">{PR.finalLead}</p>
-                <Link to="/ly-thuyet" className="pr-btn pr-btn-gold pr-btn-xl">Vào bài</Link>
-              </MotionDiv>
-            </MotionDiv>
+            <FinalScreen
+              key="final"
+              from={puzzles[puzzles.length - 1].answer}
+              to={PR.finalTitle}
+              lead={PR.finalLead}
+              onNext={() => { setPhase('ranking'); setCurtainId((n) => n + 1); sfx.fanfare() }}
+            />
+          )}
+
+          {phase === 'ranking' && (
+            <Ranking
+              key="ranking"
+              scores={scores}
+              onReplay={() => { setPhase('intro'); setCurtainId((n) => n + 1) }}
+              onGo={(top1, top2) => { saveTops(top1, top2); navigate('/game') }}
+            />
           )}
         </AnimatePresence>
 
         {(playing || showResult) && (
-          <footer className="pr-controls">
+          <footer className={`pr-controls${revealedAnswer ? ' pr-controls-reveal' : ''}`}>
+            <ScoreRow scores={scores} correct={correct} interactive={revealedAnswer} onToggle={toggleCorrect} />
             {playing && (
               <>
                 <button type="button" className="pr-btn pr-btn-ghost" onClick={() => { revealOne(); sfx.land() }}>

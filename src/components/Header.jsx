@@ -1,11 +1,8 @@
 import { Link, NavLink } from 'react-router-dom'
 
 const navItems = [
-  { to: '/', label: 'Tổng quan', end: true },
   { to: '/mo-dau', label: 'Mở đầu' },
-  { to: '/ly-thuyet', label: 'Lý thuyết' },
   { to: '/game', label: 'Game' },
-  { to: '/hoi-dap', label: 'Hỏi đáp' },
 ]
 
 function Header() {
@@ -13,7 +10,7 @@ function Header() {
     <header className="sticky z-40 bg-paper/95 backdrop-blur-sm" style={{ top: 'env(safe-area-inset-top, 0px)' }}>
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-5 sm:px-10 lg:px-24">
         <div className="flex h-[80px] w-full items-center justify-between gap-4 border-b border-ink sm:gap-6">
-          <Link to="/" className="flex shrink-0 items-baseline gap-3">
+          <Link to="/mo-dau" className="flex shrink-0 items-baseline gap-3">
             <span className="font-mono text-[13px] font-medium tracking-[0.14em] text-ink lg:text-base">MLN131</span>
             <span className="hidden text-sm text-muted sm:inline lg:text-lg">Nhóm 1</span>
           </Link>

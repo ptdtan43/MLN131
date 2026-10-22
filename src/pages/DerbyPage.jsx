@@ -4,6 +4,7 @@ import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import { HorseSprite } from '../game/derby/horse'
 import { PixelSprite } from '../game/pixel'
 import { CLOZE_BANK, PERKS, ROUNDS, STAGES, STATIONS, TEAMS, TRACK_STEPS } from '../game/derby/derbyData'
+import { loadTops } from '../game/derby/tops'
 import { setMuted, sfx } from '../game/sfx'
 import { useStageScale } from '../game/stage'
 import './PictureRush.css'
@@ -15,7 +16,10 @@ const SEGMENTS = 12
 const LANE_X0 = 400
 const LANE_LEN = 1300
 const HORSE_W = 124
+const LANE_GAP = 62
 const perkById = (id) => PERKS.find((p) => p.id === id)
+/* Mảng có một phần tử cho mỗi đội, để số đội chỉ nằm ở TEAMS. */
+const perTeam = (value) => TEAMS.map(() => value)
 
 /* ---------- nền nhiều lớp đổi theo "thời kỳ": đồng ruộng, nhà máy, thành phố ---------- */
 function makeRng(seed) {
@@ -267,9 +271,11 @@ function SlotMachine({ result, onDone, team }) {
 
 /* ---------- cửa sổ nhận quyền lợi trước khi đua ---------- */
 function Ceremony({ onDone }) {
-  const [step, setStep] = useState('pick') // pick | top1 | top2
-  const [top1, setTop1] = useState(null)
-  const [top2, setTop2] = useState(null)
+  /* Nếu vừa chơi Picture Rush xong thì Top 1, Top 2 đã được tính sẵn; vẫn cho đổi tay nếu cần. */
+  const preset = useMemo(() => loadTops(TEAMS.length), [])
+  const [step, setStep] = useState(preset ? 'top1' : 'pick') // pick | top1 | top2
+  const [top1, setTop1] = useState(preset ? preset.top1 : null)
+  const [top2, setTop2] = useState(preset ? preset.top2 : null)
   const [perk1, setPerk1] = useState(null)
   const [perk2, setPerk2] = useState(null)
   const [slotDone, setSlotDone] = useState(false)
@@ -345,6 +351,11 @@ function Ceremony({ onDone }) {
                 <button type="button" className="pr-btn pr-btn-gold" disabled={!perk1} onClick={() => { setStep('top2'); sfx.land() }}>
                   Chốt quyền lợi
                 </button>
+                {preset && (
+                  <button type="button" className="dv-linkbtn" onClick={() => setStep('pick')}>
+                    Đổi Top 1, Top 2
+                  </button>
+                )}
               </div>
             </>,
           )}
@@ -380,7 +391,7 @@ function Ceremony({ onDone }) {
 /* ---------- đường đua ---------- */
 const posX = (steps) => LANE_X0 + (Math.min(steps, TRACK_STEPS) / TRACK_STEPS) * LANE_LEN
 
-function Track({ steps, perks, galloping, pops, flashLane, stageIdx }) {
+function Track({ steps, perks, galloping, pops, flashLane }) {
   const maxSteps = Math.max(...steps)
   return (
     <section className="dv-track pr-box" aria-label="Đường đua">
@@ -395,13 +406,13 @@ function Track({ steps, perks, galloping, pops, flashLane, stageIdx }) {
         const perk = perks[i]
         const leading = maxSteps > 0 && steps[i] === maxSteps
         return (
-          <div className={`dv-lane${flashLane.includes(i) ? ' is-flash' : ''}`} key={t.id} style={{ '--team': t.color, top: 106 + i * 70, zIndex: i + 1 }}>
+          <div className={`dv-lane${flashLane.includes(i) ? ' is-flash' : ''}`} key={t.id} style={{ '--team': t.color, top: 106 + i * LANE_GAP, zIndex: i + 1 }}>
             <div className="dv-lane-label">
               <p className="dv-lane-name">{t.name}</p>
               {perk && (
-                <p className={`dv-lane-perk${perk.used && !(perk.perk === 'double' && perk.activeStage === stageIdx) ? ' is-used' : ''}`}>
-                  <PixelSprite name={perkById(perk.perk).sprite} size={30} />
-                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perk.used ? (perk.perk === 'double' && perk.activeStage === stageIdx ? 'đang ×2' : 'đã dùng') : perkById(perk.perk).badge}</span>
+                <p className={`dv-lane-perk${perk.used ? ' is-used' : ''}`}>
+                  <PixelSprite name={perkById(perk.perk).sprite} size={26} />
+                  <span>{perk.tier === 'gold' ? 'Vé Vàng' : 'Vé Bạc'} · {perk.used ? 'đã dùng' : perkById(perk.perk).badge}</span>
                 </p>
               )}
             </div>
@@ -517,8 +528,7 @@ function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setU
   const [menu, setMenu] = useState(null)
   const toggleCorrect = (i) => setCorrect((arr) => arr.map((v, k) => (k === i ? !v : v)))
   const toggle = (setter, i) => setter((arr) => arr.map((v, k) => (k === i ? !v : v)))
-  const doubledNow = (i) => useDouble[i] || (perks[i]?.perk === 'double' && perks[i].activeStage === round.stage)
-  const base = (i) => (correct[i] ? 1 : 0) * (doubledNow(i) ? 2 : 1) + (usePlus2[i] ? 2 : 0)
+  const base = (i) => (correct[i] ? 1 : 0) * (useDouble[i] ? 2 : 1) + (usePlus2[i] ? 2 : 0)
   /* Cướp bước được tính sau khi cộng điểm câu này, nên số bước có thể cướp là số bước sau câu. */
   const projected = steps.map((s, k) => s + base(k))
   const takeable = (target) => projected[target] - stealTarget.filter((t) => t === target).length
@@ -529,7 +539,7 @@ function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setU
     const onKey = (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey) return
       const n = Number(e.key)
-      if (n >= 1 && n <= 4) toggleCorrect(n - 1)
+      if (n >= 1 && n <= TEAMS.length) toggleCorrect(n - 1)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -541,7 +551,6 @@ function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setU
         const perk = perks[i]
         const available = perk && !perk.used
         const gain = base(i) + (stealTarget[i] !== null ? 1 : 0)
-        const runningDouble = perk?.perk === 'double' && perk.used && perk.activeStage === round.stage && !useDouble[i]
         const on = useDouble[i] || usePlus2[i] || stealTarget[i] !== null
         return (
           <div className={`dv-chip${correct[i] ? ' is-right' : ''}`} key={t.id} style={{ '--team': t.color }}>
@@ -554,7 +563,7 @@ function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setU
             <div className="dv-chip-perk">
               {available && perk.perk === 'double' && (
                 <button type="button" className={`dv-pill${useDouble[i] ? ' is-on' : ''}${lastRound && !on ? ' is-last' : ''}`} onClick={() => toggle(setUseDouble, i)}>
-                  {useDouble[i] ? '×2 hết chặng' : 'Nhân đôi'}
+                  {useDouble[i] ? '×2 câu này' : 'Nhân đôi'}
                 </button>
               )}
               {available && perk.perk === 'plus2' && (
@@ -584,7 +593,6 @@ function ScoreBar({ round, roundIdx, correct, setCorrect, perks, useDouble, setU
                   )}
                 </>
               )}
-              {runningDouble && <span className="dv-pill is-run">×2 đang chạy</span>}
             </div>
           </div>
         )
@@ -602,8 +610,10 @@ function Result({ steps, onReplay }) {
     return { ...t, rank }
   })
   const winners = ranked.filter((t) => t.rank === 1)
-  const podium = [ranked[1], ranked[0], ranked[2], ranked[3]].filter(Boolean)
-  const heights = { 1: 340, 2: 290, 3: 250, 4: 250 }
+  /* Xếp hạng nhất ở giữa, hạng 2 bên trái, hạng 3 bên phải, rồi dàn ra hai bên. */
+  const podium = []
+  ranked.forEach((t, i) => (i % 2 === 1 ? podium.unshift(t) : podium.push(t)))
+  const heights = { 1: 340, 2: 290, 3: 250, 4: 250, 5: 250 }
   return (
     <MotionDiv className="dv-result-screen" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
       <MotionDiv className="dv-flash" initial={{ opacity: 0.95 }} animate={{ opacity: 0 }} transition={{ duration: 1.1 }} />
@@ -627,7 +637,7 @@ function Result({ steps, onReplay }) {
         ))}
       </div>
       <MotionDiv className="dv-result-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 0.6 }}>
-        <Link to="/hoi-dap" className="pr-btn pr-btn-gold">Sang phần hỏi đáp</Link>
+        <Link to="/mo-dau" className="pr-btn pr-btn-gold">Về phần mở đầu</Link>
         <button type="button" className="pr-btn pr-btn-ghost" onClick={onReplay}>Chơi lại</button>
       </MotionDiv>
     </MotionDiv>
@@ -639,17 +649,17 @@ export default function DerbyPage() {
   const scale = useStageScale()
   const [stage, setStage] = useState('intro') // intro | ceremony | race | result
   const [muted, setMutedState] = useState(false)
-  const [perks, setPerks] = useState([null, null, null, null])
+  const [perks, setPerks] = useState(() => perTeam(null))
   const [roundIdx, setRoundIdx] = useState(0)
   const [phase, setPhase] = useState('brief') // brief | timing | reveal | running
   const [seconds, setSeconds] = useState(ROUNDS[0].seconds)
-  const [steps, setSteps] = useState([0, 0, 0, 0])
-  const [correct, setCorrect] = useState([false, false, false, false])
-  const [useDouble, setUseDouble] = useState([false, false, false, false])
-  const [usePlus2, setUsePlus2] = useState([false, false, false, false])
-  const [stealTarget, setStealTarget] = useState([null, null, null, null])
-  const [galloping, setGalloping] = useState([false, false, false, false])
-  const [pops, setPops] = useState([null, null, null, null])
+  const [steps, setSteps] = useState(() => perTeam(0))
+  const [correct, setCorrect] = useState(() => perTeam(false))
+  const [useDouble, setUseDouble] = useState(() => perTeam(false))
+  const [usePlus2, setUsePlus2] = useState(() => perTeam(false))
+  const [stealTarget, setStealTarget] = useState(() => perTeam(null))
+  const [galloping, setGalloping] = useState(() => perTeam(false))
+  const [pops, setPops] = useState(() => perTeam(null))
   const [flashLane, setFlashLane] = useState([])
   const [banner, setBanner] = useState(null)
   const [curtainId, setCurtainId] = useState(0)
@@ -660,10 +670,10 @@ export default function DerbyPage() {
   useEffect(() => setMuted(muted), [muted])
 
   const resetRoundInputs = () => {
-    setCorrect([false, false, false, false])
-    setUseDouble([false, false, false, false])
-    setUsePlus2([false, false, false, false])
-    setStealTarget([null, null, null, null])
+    setCorrect(perTeam(false))
+    setUseDouble(perTeam(false))
+    setUsePlus2(perTeam(false))
+    setStealTarget(perTeam(null))
   }
 
   const reveal = useCallback(() => {
@@ -700,8 +710,7 @@ export default function DerbyPage() {
   const applyScoring = () => {
     const before = steps
     const gains = TEAMS.map((_, i) => {
-      const doubled = useDouble[i] || (perks[i]?.perk === 'double' && perks[i].activeStage === round.stage)
-      return (correct[i] ? 1 : 0) * (doubled ? 2 : 1) + (usePlus2[i] ? 2 : 0)
+      return (correct[i] ? 1 : 0) * (useDouble[i] ? 2 : 1) + (usePlus2[i] ? 2 : 0)
     })
     const after = before.map((s, i) => s + gains[i])
     stealTarget.forEach((target, i) => {
@@ -715,7 +724,7 @@ export default function DerbyPage() {
         if (!p || p.used) return p
         const usedNow = (p.perk === 'double' && useDouble[i]) || (p.perk === 'plus2' && usePlus2[i]) || (p.perk === 'steal' && stealTarget[i] !== null)
         if (!usedNow) return p
-        return p.perk === 'double' ? { ...p, used: true, activeStage: round.stage } : { ...p, used: true }
+        return { ...p, used: true }
       }),
     )
     setSteps(after)
@@ -740,8 +749,8 @@ export default function DerbyPage() {
       }, 900)
     }
     setTimeout(() => {
-      setGalloping([false, false, false, false])
-      setPops([null, null, null, null])
+      setGalloping(perTeam(false))
+      setPops(perTeam(null))
       setFlashLane([])
       advance()
     }, 2600)
@@ -763,7 +772,7 @@ export default function DerbyPage() {
   }
 
   const begin = ({ top1, top2, perk1, perk2 }) => {
-    const next = [null, null, null, null]
+    const next = perTeam(null)
     if (top1 !== null && perk1) next[top1] = { perk: perk1, tier: 'gold', used: false }
     if (top2 !== null && perk2) next[top2] = { perk: perk2, tier: 'silver', used: false }
     setPerks(next)
@@ -773,11 +782,11 @@ export default function DerbyPage() {
 
   const replay = () => {
     setStage('intro')
-    setPerks([null, null, null, null])
+    setPerks(perTeam(null))
     setRoundIdx(0)
     setPhase('brief')
     setSeconds(ROUNDS[0].seconds)
-    setSteps([0, 0, 0, 0])
+    setSteps(perTeam(0))
     resetRoundInputs()
     setCurtainId((n) => n + 1)
   }
@@ -855,7 +864,7 @@ export default function DerbyPage() {
                 {muted ? <path d="M16 9l5 6M21 9l-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />}
               </svg>
             </button>
-            <Link to="/hoi-dap" className="pr-skip">Sang hỏi đáp</Link>
+            <Link to="/mo-dau" className="pr-skip">Về mở đầu</Link>
           </div>
         </header>
 
@@ -876,7 +885,7 @@ export default function DerbyPage() {
 
         {stage === 'race' && (
           <>
-            <Track steps={steps} perks={perks} galloping={galloping} pops={pops} flashLane={flashLane} stageIdx={round.stage} />
+            <Track steps={steps} perks={perks} galloping={galloping} pops={pops} flashLane={flashLane} />
             <section className="dv-board pr-box" aria-label={`Câu ${round.nth} của chặng ${round.stage + 1}`}>
               <MotionDiv key={roundIdx} className="dv-board-inner" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: EASE }}>
                 <div className="dv-board-head">

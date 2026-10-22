@@ -248,10 +248,51 @@
 .pr-bar-bottom { bottom: 0; }
 .pr-final-sprites { display: flex; gap: 28px; margin-top: 30px; }
 .pr-final-title { display: flex; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 300px; line-height: 0.95; color: var(--gold); letter-spacing: 0.01em; }
+.pr-final-letter.is-changed { color: var(--cream); text-shadow: 0 0 40px rgb(224 176 64 / 0.9); }
 .pr-final-lower { display: flex; flex-direction: column; align-items: center; gap: 22px; margin-bottom: 30px; }
 .pr-final-lead { font-size: 38px; font-weight: 600; max-width: 1280px; line-height: 1.45; }
 .pr-final-score { font-size: 28px; font-weight: 700; color: var(--muted); }
 .pr-final .pr-btn { z-index: 2; }
+
+/* Bảng điểm 5 đội: khi chơi chỉ xem điểm, khi hiện đáp án thì chạm vào đội trả lời đúng */
+.pr-controls { align-items: center; }
+.pr-controls-reveal { gap: 20px; align-items: flex-end; bottom: 28px; }
+.pr-controls-reveal .pr-btn-wide { min-width: 0; width: 440px; height: 112px; white-space: nowrap; }
+.pr-scorebar { display: flex; gap: 10px; }
+.pr-chip { position: relative; width: 196px; height: 92px; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 8px 12px 8px 16px; background: #26231d; border-left: 10px solid var(--team); transition: background 0.2s; }
+.pr-scorebar.is-live .pr-chip { width: 256px; height: 112px; justify-content: flex-start; }
+.pr-chip.is-right { background: color-mix(in srgb, var(--team) 24%, #26231d); }
+.pr-chip-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.pr-chip-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 36px; line-height: 1; color: var(--team); }
+.pr-chip-total { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 52px; line-height: 1; color: var(--cream); font-variant-numeric: tabular-nums; }
+.pr-chip.is-right .pr-chip-total { color: var(--gold); }
+.pr-chip-mark { position: relative; height: 42px; border: 0; background: #3a352c; color: var(--muted); font: inherit; font-size: 24px; font-weight: 800; cursor: pointer; }
+.pr-chip.is-right .pr-chip-mark { background: var(--gold); color: #141311; }
+.pr-chip-mark kbd { position: absolute; right: 6px; top: -9px; padding: 0 8px; background: #3a352c; color: var(--muted); font-family: 'IBM Plex Mono', monospace; font-size: 17px; font-weight: 800; }
+
+/* Màn xếp hạng: Top 1 (Vé Vàng) và Top 2 (Vé Bạc) */
+.pr-rank { position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 130px; background: rgb(13 12 10 / 0.82); }
+.pr-rank-title { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 84px; line-height: 1; color: var(--gold); letter-spacing: 0.03em; }
+.pr-tops { display: flex; gap: 48px; }
+.pr-ticket { position: relative; width: 640px; height: 210px; padding: 22px 36px 0; color: #141311; background: var(--gold); clip-path: var(--notch); text-align: left; overflow: hidden; }
+.pr-ticket.silver { background: #cfd2d8; }
+.pr-ticket-title { font-weight: 800; font-size: 28px; letter-spacing: 0.04em; }
+.pr-ticket-team { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 112px; line-height: 1.05; }
+.pr-ticket-stripe { position: absolute; left: 0; right: 0; bottom: 0; height: 16px; }
+.pr-choose { display: flex; align-items: center; gap: 28px; padding: 10px 24px; background: #26231d; border-left: 10px solid var(--gold); }
+.pr-choose p { font-size: 30px; font-weight: 700; color: var(--gold); }
+.pr-choose-teams { display: flex; gap: 12px; }
+.pr-choose-chip { height: 64px; padding: 0 28px; border: 0; border-bottom: 8px solid var(--team); background: #3a352c; color: var(--cream); font: inherit; font-size: 32px; font-weight: 800; cursor: pointer; }
+.pr-choose-chip:hover { background: var(--team); color: #141311; }
+.pr-standings { width: 1100px; display: flex; flex-direction: column; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.pr-standings li { display: grid; grid-template-columns: 150px 1fr 70px; align-items: center; gap: 20px; height: 44px; }
+.pr-standing-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 36px; line-height: 1; color: var(--team); }
+.pr-standing-bar { height: 26px; background: #26231d; }
+.pr-standing-bar i { display: block; height: 100%; background: var(--team); opacity: 0.55; transition: width 0.8s; }
+.pr-standings li.is-top .pr-standing-bar i { opacity: 1; }
+.pr-standing-score { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 44px; line-height: 1; text-align: right; font-variant-numeric: tabular-nums; }
+.pr-rank-actions { display: flex; align-items: center; gap: 28px; margin-top: 8px; }
+.pr-btn:disabled { opacity: 0.35; cursor: default; transform: none; }
 
 @media (prefers-reduced-motion: reduce) {
   .pr-layer, .pr-bob, .pr-round-now, .pr-timer.is-urgent .pr-seconds { animation: none !important; }

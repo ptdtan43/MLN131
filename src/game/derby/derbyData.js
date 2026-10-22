@@ -1,16 +1,19 @@
 /* Dữ liệu game "Knowledge Derby" (đường đua kiến thức), game củng cố cuối bài.
-   Chín câu hỏi nhanh chia ba chặng. Bốn đội viết đáp án lên bảng; người trình bày hiện lời giải rồi chạm vào đội làm đúng. */
+   Chín câu hỏi nhanh chia ba chặng. Năm đội (năm nhóm còn lại của lớp) giơ tay đọc đáp án; người trình bày hiện lời giải rồi chạm vào đội làm đúng.
+   Muốn đổi số đội, chỉ cần thêm hoặc bớt một dòng trong TEAMS; phần còn lại của game tự theo số này
+   (riêng bố cục đường đua trong Derby.css được chỉnh cho tối đa 5 làn). */
 
 export const TEAMS = [
   { id: 0, name: 'Đội 1', color: '#D2513F' },
   { id: 1, name: 'Đội 2', color: '#3AA396' },
   { id: 2, name: 'Đội 3', color: '#D9A13E' },
   { id: 3, name: 'Đội 4', color: '#6273C4' },
+  { id: 4, name: 'Đội 5', color: '#D46FA8' },
 ]
 
 /* Quyền lợi: Top 1 của "Đuổi hình bắt chữ" nhận Vé Vàng và tự chọn; Top 2 nhận Vé Bạc và quay ngẫu nhiên. */
 export const PERKS = [
-  { id: 'double', name: 'Nhân đôi', badge: '×2', sprite: 'bolt', desc: 'Từ câu bạn chọn đến hết chặng đó, mỗi câu đúng được 2 bước thay vì 1. Dùng ở câu đầu chặng sẽ được lợi nhất. Dùng một lần.' },
+  { id: 'double', name: 'Nhân đôi', badge: '×2', sprite: 'bolt', desc: 'Ở một câu bạn chọn, trả lời đúng được 2 bước thay vì 1. Chỉ dùng một lần, cho một câu duy nhất.' },
   { id: 'plus2', name: 'Tiến thêm 2 bước', badge: '+2', sprite: 'shoe', desc: 'Cộng thêm 2 bước ở câu bạn chọn, kể cả khi trả lời sai. Dùng một lần.' },
   { id: 'steal', name: 'Cướp 1 bước', badge: '−1', sprite: 'magnet', desc: 'Sau khi chấm một câu, lấy 1 bước của đội đang có bước. Dùng một lần, không dùng được khi chưa đội nào có bước.' },
 ]
@@ -34,7 +37,7 @@ export const STAGES = [
   { name: 'Điền từ', blurb: 'Từ nào còn thiếu?' },
 ]
 
-const SORT_HOW = 'Viết lên bảng: Bỏ qua hoặc Kế thừa.'
+const SORT_HOW = 'Giơ tay đọc đáp án: Bỏ qua hoặc Kế thừa.'
 
 /* Chặng 1: phân loại từng thẻ (giáo trình tr.111–112). */
 const sortRound = (nth, text, answer) => ({
@@ -67,7 +70,7 @@ const orderRound = (nth, seconds, cards, years) => ({
   nth,
   seconds,
   task: 'Ghép năm với mốc, rồi xếp theo thứ tự thời gian.',
-  how: 'Viết chữ cái và năm, từ sớm đến muộn.',
+  how: 'Giơ tay đọc chữ cái và năm, từ sớm đến muộn.',
   cards,
   years,
   answerLine: [...cards].sort((a, b) => a.rank - b.rank).map((c) => `${c.letter} ${c.year}`).join('  '),
@@ -82,7 +85,7 @@ const clozeRound = (nth, before, after, answer) => ({
   nth,
   seconds: 25,
   task: 'Điền từ còn thiếu vào câu.',
-  how: 'Viết một từ lên bảng. Một từ trong bảng sẽ không dùng đến.',
+  how: 'Giơ tay đọc một từ. Một từ trong bảng sẽ không dùng đến.',
   cloze: { before, after, answer },
   answerLine: answer,
 })

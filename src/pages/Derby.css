@@ -15,15 +15,15 @@
 .dv-tab.is-done { background: var(--gold-deep); color: #141311; }
 
 /* Đường đua */
-.dv-track { --edge: #4a4132; --fill: #15130f; position: absolute; left: 64px; top: 140px; width: 1792px; height: 384px; }
+.dv-track { --edge: #4a4132; --fill: #15130f; position: absolute; left: 64px; top: 124px; width: 1792px; height: 424px; }
 .dv-station { position: absolute; top: 10px; width: 270px; margin-left: -135px; text-align: center; z-index: 1; }
 .dv-station-year { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 36px; line-height: 1; color: var(--gold); }
 .dv-station-label { white-space: pre-line; font-size: 20px; font-weight: 600; color: var(--muted); margin-top: 4px; }
-.dv-station-line { position: absolute; left: 50%; top: 82px; height: 290px; border-left: 4px dotted rgb(239 232 216 / 0.18); }
+.dv-station-line { position: absolute; left: 50%; top: 82px; height: 330px; border-left: 4px dotted rgb(239 232 216 / 0.18); }
 .dv-lane { position: absolute; left: 0; right: 0; height: 70px; }
-.dv-lane-label { position: absolute; left: 34px; top: 4px; width: 210px; }
+.dv-lane-label { position: absolute; left: 34px; top: 0; width: 210px; }
 .dv-lane-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 34px; line-height: 1; color: var(--team); }
-.dv-lane-perk { display: flex; align-items: center; gap: 6px; margin-top: 0; font-size: 18px; font-weight: 700; color: var(--cream); }
+.dv-lane-perk { display: flex; align-items: center; gap: 6px; margin-top: 0; font-size: 17px; font-weight: 700; color: var(--cream); }
 .dv-lane-perk.is-used { opacity: 0.4; text-decoration: line-through; }
 .dv-lane-line { position: absolute; left: 400px; width: 1300px; top: 54px; height: 6px; background-image: linear-gradient(90deg, var(--team) 62%, transparent 62%); background-size: 36px 6px; opacity: 0.38; transition: opacity 0.3s; }
 .dv-lane.is-flash .dv-lane-line { opacity: 1; }
@@ -45,7 +45,7 @@
 .dv-score.is-lead { color: var(--gold); }
 
 /* Bảng nhiệm vụ */
-.dv-board { --fill: #1a1814; --edge: #4a4132; position: absolute; left: 64px; top: 540px; width: 1792px; height: 366px; padding: 18px 40px 16px; }
+.dv-board { --fill: #1a1814; --edge: #4a4132; position: absolute; left: 64px; top: 556px; width: 1792px; height: 364px; padding: 18px 40px 16px; }
 .dv-board-inner { height: 100%; display: flex; flex-direction: column; gap: 14px; }
 .dv-board-head { display: flex; align-items: baseline; gap: 34px; flex-wrap: wrap; }
 .dv-task { font-size: 38px; font-weight: 800; line-height: 1.2; }
@@ -152,14 +152,14 @@ button.dv-perk:hover { transform: translateY(-5px); background: #302b24; }
 .dv-result-head { position: absolute; top: 150px; left: 0; right: 0; text-align: center; }
 .dv-result-kicker { font-size: 38px; font-weight: 800; color: var(--gold); letter-spacing: 0.04em; }
 .dv-result-title { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 230px; line-height: 0.95; }
-.dv-podium { position: absolute; left: 0; right: 0; bottom: 160px; display: flex; justify-content: center; align-items: flex-end; gap: 36px; }
+.dv-podium { position: absolute; left: 0; right: 0; bottom: 160px; display: flex; justify-content: center; align-items: flex-end; gap: 28px; }
 .dv-podium-col { display: flex; flex-direction: column; align-items: center; }
 .dv-podium-horse { margin-bottom: -6px; position: relative; z-index: 1; }
-.dv-podium-block { width: 330px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 14px; color: #141311; background: #4a443a; border-top: 10px solid var(--team); }
+.dv-podium-block { width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 14px; color: #141311; background: #4a443a; border-top: 10px solid var(--team); }
 .dv-podium-block.rank-1 { background: #e0b040; }
 .dv-podium-block.rank-2 { background: #cfd2d8; }
 .dv-podium-block.rank-3 { background: #b88555; }
-.dv-podium-block.rank-4 { color: var(--cream); }
+.dv-podium-block.rank-4, .dv-podium-block.rank-5 { color: var(--cream); }
 .dv-podium-rank { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 84px; line-height: 1; }
 .dv-podium-name { font-size: 36px; font-weight: 800; }
 .dv-podium-steps { font-size: 28px; font-weight: 700; }
@@ -200,18 +200,18 @@ button.dv-perk:hover { transform: translateY(-5px); background: #302b24; }
 .dv-bank-words { display: flex; flex-wrap: wrap; gap: 12px; }
 
 .dv-controls-reveal { gap: 20px; align-items: flex-end; bottom: 28px; }
-.dv-controls-reveal .pr-btn-wide { min-width: 0; width: 500px; height: 112px; white-space: nowrap; }
+.dv-controls-reveal .pr-btn-wide { min-width: 0; width: 440px; height: 112px; white-space: nowrap; }
 .dv-scorebar { display: flex; gap: 12px; }
-.dv-chip { position: relative; width: 290px; height: 112px; display: flex; flex-direction: column; gap: 6px; padding: 8px 10px 8px 14px; background: #26231d; border-left: 10px solid var(--team); transition: background 0.2s; }
+.dv-chip { position: relative; width: 256px; height: 112px; display: flex; flex-direction: column; gap: 6px; padding: 8px 8px 8px 12px; background: #26231d; border-left: 10px solid var(--team); transition: background 0.2s; }
 .dv-chip.is-right { background: color-mix(in srgb, var(--team) 24%, #26231d); }
-.dv-chip-main { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 12px; height: 54px; padding: 0; border: 0; background: transparent; color: var(--cream); font: inherit; cursor: pointer; text-align: left; }
+.dv-chip-main { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; height: 54px; padding: 0; border: 0; background: transparent; color: var(--cream); font: inherit; cursor: pointer; text-align: left; }
 .dv-chip-main kbd { position: absolute; right: 8px; top: -10px; padding: 0 8px; background: #3a352c; color: var(--muted); font-size: 18px; font-weight: 800; }
-.dv-chip-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 38px; line-height: 1; color: var(--team); }
-.dv-chip-mark { min-width: 74px; padding: 6px 10px; text-align: center; background: #3a352c; color: var(--muted); font-size: 24px; font-weight: 800; line-height: 1.1; }
+.dv-chip-name { font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 34px; line-height: 1; color: var(--team); }
+.dv-chip-mark { min-width: 62px; padding: 6px 8px; text-align: center; background: #3a352c; color: var(--muted); font-size: 22px; font-weight: 800; line-height: 1.1; }
 .dv-chip.is-right .dv-chip-mark { background: var(--gold); color: #141311; }
-.dv-chip-gain { min-width: 54px; text-align: right; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 44px; line-height: 1; color: var(--gold); }
+.dv-chip-gain { min-width: 44px; text-align: right; font-family: 'Archivo', sans-serif; font-stretch: 62%; font-weight: 900; font-size: 40px; line-height: 1; color: var(--gold); }
 .dv-chip-perk { position: relative; flex: 1; display: flex; align-items: center; }
-.dv-pill { height: 38px; padding: 0 16px; border: 0; background: #3a352c; color: var(--cream); font: inherit; font-size: 21px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.dv-pill { height: 38px; padding: 0 12px; border: 0; background: #3a352c; color: var(--cream); font: inherit; font-size: 20px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .dv-pill.is-on { background: var(--gold); color: #141311; }
 .dv-pill.is-run { display: inline-flex; align-items: center; background: transparent; color: var(--gold); padding: 0; cursor: default; }
 .dv-pill:disabled { opacity: 0.4; cursor: default; }

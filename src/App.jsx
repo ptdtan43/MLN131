@@ -4,23 +4,18 @@ import CardsPage from './pages/CardsPage'
 import DerbyPage from './pages/DerbyPage'
 import GamePage from './pages/GamePage'
 import OpeningPage from './pages/OpeningPage'
-import OverviewPage from './pages/OverviewPage'
-import QAPage from './pages/QAPage'
-import TheoryPage from './pages/TheoryPage'
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<OverviewPage />} />
+        <Route index element={<Navigate to="/mo-dau" replace />} />
         <Route path="mo-dau" element={<OpeningPage />} />
-        <Route path="bo-qua-ke-thua" element={<CardsPage />} />
-        <Route path="ly-thuyet" element={<TheoryPage />} />
         <Route path="game" element={<DerbyPage />} />
+        <Route path="bo-qua-ke-thua" element={<CardsPage />} />
         <Route path="chiec-non" element={<GamePage />} />
-        <Route path="hoi-dap" element={<QAPage />} />
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/mo-dau" replace />} />
     </Routes>
   )
 }
