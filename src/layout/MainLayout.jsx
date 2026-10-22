@@ -3,7 +3,9 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Footer from '../components/Footer'
 import Header from '../components/Header'
 
-const STAGE_PATHS = ['/game', '/mo-dau']
+const STAGE_PATHS = ['/chiec-non']
+// Trang toàn màn hình 16:9 (Picture Rush): ẩn thanh menu giấy để nhìn như một màn game.
+const IMMERSIVE_PATHS = ['/mo-dau', '/game']
 
 function MainLayout() {
   const { pathname, hash } = useLocation()
@@ -11,6 +13,8 @@ function MainLayout() {
   useEffect(() => {
     if (!hash) window.scrollTo({ top: 0, behavior: 'instant' })
   }, [pathname, hash])
+
+  if (IMMERSIVE_PATHS.includes(pathname)) return <Outlet />
 
   return (
     <div className="site-shell flex min-h-dvh flex-col text-ink">
