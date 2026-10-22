@@ -40,8 +40,10 @@ Câu đố của game nằm trong `src/game/questions.js`. Đáp án viết hoa,
 
 ## Thêm ảnh thật (quan trọng)
 
-Trang hiện **chưa có ảnh** vì lúc làm không tải được ảnh từ kho ảnh mở. Tiêu chí chấm yêu cầu: ảnh màu, có nguồn rõ ràng,
-không dùng ảnh AI cho người thật, lá cờ đúng, bản đồ trọn vẹn lãnh thổ.
+Trang hiện có 2 ảnh thật (không phải ảnh AI) lấy từ Wikimedia Commons, đã ghi tác giả, giấy phép và link nguồn dưới ảnh:
+`public/img/quoc-ky-lang-bac.jpg` (Rosino, CC BY-SA 2.0) và `public/img/sai-gon-ban-dem.jpg` (Radek Kucharski, CC BY 2.0).
+Cả hai ảnh đã được thu nhỏ. Tiêu chí chấm yêu cầu: ảnh màu, có nguồn rõ ràng,
+không dùng ảnh AI cho người thật, lá cờ đúng, bản đồ trọn vẹn lãnh thổ. Chưa có bản đồ nào, nếu thêm phải kiểm tra có Hoàng Sa, Trường Sa.
 
 1. Chép ảnh vào thư mục `public/img/`.
 2. Mở `src/data/content.js`, tìm `IMAGES` và thêm một khối theo mẫu có sẵn (file, alt, caption, credit, source, license).
