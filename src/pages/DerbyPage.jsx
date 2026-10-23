@@ -627,7 +627,7 @@ function Result({ steps, onReplay }) {
         ))}
       </div>
       <MotionDiv className="dv-result-actions" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2, duration: 0.6 }}>
-        <Link to="/hoi-dap" className="pr-btn pr-btn-gold">Sang phần hỏi đáp</Link>
+        <Link to="/" className="pr-btn pr-btn-gold">Về game mở đầu</Link>
         <button type="button" className="pr-btn pr-btn-ghost" onClick={onReplay}>Chơi lại</button>
       </MotionDiv>
     </MotionDiv>
@@ -855,7 +855,7 @@ export default function DerbyPage() {
                 {muted ? <path d="M16 9l5 6M21 9l-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />}
               </svg>
             </button>
-            <Link to="/hoi-dap" className="pr-skip">Sang hỏi đáp</Link>
+            <Link to="/" className="pr-skip">Về game mở đầu</Link>
           </div>
         </header>
 

@@ -118,7 +118,7 @@ function Hud({ index, total, seconds, urgent, muted, onMute, showTimer }) {
             {muted ? <path d="M16 9l5 6M21 9l-5 6" /> : <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />}
           </svg>
         </button>
-        <Link to="/ly-thuyet" className="pr-skip">Vào bài ngay</Link>
+        <Link to="/game" className="pr-skip">Sang game cuối</Link>
       </div>
     </header>
   )
@@ -354,7 +354,7 @@ export default function OpeningPage() {
               </h1>
               <MotionDiv initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5, duration: 0.6, ease: EASE }} className="pr-final-lower">
                 <p className="pr-final-lead">{PR.finalLead}</p>
-                <Link to="/ly-thuyet" className="pr-btn pr-btn-gold pr-btn-xl">Vào bài</Link>
+                <Link to="/game" className="pr-btn pr-btn-gold pr-btn-xl">Sang game cuối</Link>
               </MotionDiv>
             </MotionDiv>
           )}

@@ -1,60 +1,43 @@
-# MLN131 · Nhóm 1 · Quá độ lên CNXH ở Việt Nam
+# MLN131 · Nhóm 1 · Hai trò chơi cho bài "Quá độ lên CNXH ở Việt Nam"
 
-Trang web thuyết trình môn Chủ nghĩa xã hội khoa học (Đại học FPT TP.HCM), làm theo bảng tiêu chí chấm thuyết trình.
-Giao diện lấy từ repo thuyết trình cũ của nhóm (`HCM202_Group5`): nền giấy ấm, chữ có chân, màn game nền tối.
+Trang web chỉ còn hai trò chơi, làm theo bảng tiêu chí chấm thuyết trình môn Chủ nghĩa xã hội khoa học (Đại học FPT TP.HCM).
+Phần lý thuyết nằm trong slide Canva của nhóm. Link Vercel của trang này được chèn vào slide để mọi người cùng chơi.
 
-Phần của nhóm: Chương 3, mục III "Quá độ chủ nghĩa xã hội ở Việt Nam" (giáo trình tr.109–124, slide giảng viên 37–51).
-
-## Các trang
-
-| Trang | Việc cần làm khi thuyết trình | Thời lượng gợi ý |
+| Địa chỉ | Trò chơi | Cách dùng |
 | --- | --- | --- |
-| Tổng quan | Giới thiệu bài, dẫn vào trò chơi mở đầu | |
-| Mở đầu | **Picture Rush** (đổi hình bắt chữ): 9 câu đố vui, câu cuối "qua đò" → "quá độ" dẫn vào bài. Toàn màn hình 16:9. 10 câu, mỗi câu 30 giây; hết giờ đáp án tự hiện để ghi điểm cho các đội. Phím: Space (hiện đáp án sớm, rồi câu tiếp), H (gợi ý) | khoảng 5 phút |
-| Lý thuyết | Hai phần chính và phần tóm lại. Mỗi phần có mục "Gợi ý nói" để bấm mở | tối đa 10 phút |
-| Game | **Knowledge Derby** (đường đua kiến thức): 4 đội, 9 câu hỏi nhanh chia 3 chặng (Phân loại Bỏ qua/Kế thừa, Xếp mốc thời gian, Điền từ), mỗi câu 20 đến 40 giây. Các đội viết đáp án lên bảng, bạn hiện lời giải rồi chạm vào đội làm đúng (hoặc bấm phím 1 đến 4), ngựa chạy sau mỗi câu. Top 1 "Đuổi hình bắt chữ" chọn quyền lợi (Vé Vàng), Top 2 quay ngẫu nhiên bằng máy kéo cần (Vé Bạc). Phím: Space làm bước kế tiếp | khoảng 5 đến 7 phút |
-| Hỏi đáp | Ba câu hỏi cuối Chương 3 và các câu dễ gặp | |
+| `/` (trang chủ) | **Picture Rush**, đổi hình bắt chữ mở đầu | 10 câu, mỗi câu 30 giây. Các đội viết đáp án lên bảng. Space để bắt đầu và hiện đáp án sớm, H để gợi ý. Câu cuối "qua đò" thành "quá độ" dẫn vào bài. Cuối cùng có nút "Sang game cuối" |
+| `/#/game` | **Knowledge Derby**, đường đua kiến thức ôn tập cuối bài | 4 đội, 9 câu nhanh chia 3 chặng (Phân loại, Xếp mốc, Điền từ). Đội viết đáp án lên bảng, bạn hiện lời giải rồi chạm vào đội đúng (hoặc phím 1 đến 4), ngựa chạy sau mỗi câu. Top 1 của Picture Rush chọn quyền lợi, Top 2 quay ngẫu nhiên. Space làm bước kế tiếp |
 
-Trang phụ `#/chiec-non` (game cũ "Chiếc nón quá độ", quay số đoán từ khóa) giữ lại để dự phòng.
-Trang phụ `#/bo-qua-ke-thua` (không có trên menu) là trò thẻ "Bỏ qua hay kế thừa?", dùng khi cần thêm một hoạt động.
-
-Trò chơi không dùng Kahoot hay game giống Kahoot, theo đúng tiêu chí chấm.
+Mở link gốc là vào Picture Rush ngay. Muốn vào thẳng game cuối thì thêm `#/game` vào sau link.
+Cả hai trò đều dành cho màn hình ngang 16:9 (TV, máy chiếu, laptop). Trang tự co khung hình theo cửa sổ.
 
 ## Chạy trên máy
 
 ```bash
 npm install
 npm run dev          # xem khi đang sửa
-npm run build        # tạo thư mục dist/ để đưa lên GitHub Pages hoặc Vercel
+npm run build        # tạo thư mục dist/
 npm run build:single # tạo một file index.html duy nhất trong dist-single/
 ```
 
-Trang dùng địa chỉ dạng `#/ly-thuyet` nên chạy được trên mọi nơi lưu trữ tĩnh, không cần cấu hình thêm.
+## Đưa lên Vercel
+
+1. Vào vercel.com, chọn Add New, Project, rồi chọn repo `ptdtan43/MLN131` và nhánh `main`.
+2. Vercel tự nhận Vite: lệnh build `npm run build`, thư mục đầu ra `dist`. Không cần cấu hình thêm.
+3. Bấm Deploy. Link dạng `https://ten-du-an.vercel.app` mở thẳng vào Picture Rush.
+
+Trang dùng địa chỉ dạng `#/game` nên không cần cấu hình chuyển hướng.
 
 ## Sửa nội dung
 
-Toàn bộ chữ nằm trong `src/data/content.js` (câu đố Picture Rush, lý thuyết, hỏi đáp, thành viên nhóm). Hình pixel-art của Picture Rush nằm trong `src/game/pixel.jsx`. Nội dung 9 câu của Knowledge Derby (thẻ, đáp án, quyền lợi, mốc đường đua) nằm trong `src/game/derby/derbyData.js`.
-Câu đố của game nằm trong `src/game/questions.js`. Đáp án viết hoa, không dùng chữ F, J, W, Z.
+- Câu đố Picture Rush: `src/data/content.js`. Hình pixel-art nằm trong `src/game/pixel.jsx`.
+- Nội dung 9 câu của Knowledge Derby (thẻ, đáp án, quyền lợi, mốc đường đua): `src/game/derby/derbyData.js`.
 
-Điền tên thành viên trong `MEMBERS` ở `src/data/content.js`, trang Tổng quan sẽ tự hiện mục "Nhóm thực hiện".
+## Ảnh thật
 
-## Thêm ảnh thật (quan trọng)
+Tiêu chí chấm yêu cầu ảnh màu thật, có nguồn rõ ràng. Hai game hiện dùng hình pixel-art tự vẽ. Muốn dùng ảnh thật cho Picture Rush,
+chép ảnh vào `public/img/` rồi thêm `images: ['img/anh-1.jpg', 'img/anh-2.jpg']` vào câu đố trong `src/data/content.js`.
 
-Trang hiện **chưa có ảnh** vì lúc làm không tải được ảnh từ kho ảnh mở. Tiêu chí chấm yêu cầu: ảnh màu, có nguồn rõ ràng,
-không dùng ảnh AI cho người thật, lá cờ đúng, bản đồ trọn vẹn lãnh thổ.
+## Bản đầy đủ cũ
 
-1. Chép ảnh vào thư mục `public/img/`.
-2. Mở `src/data/content.js`, tìm `IMAGES` và thêm một khối theo mẫu có sẵn (file, alt, caption, credit, source, license).
-3. Có hai chỗ đặt ảnh: `khoi-dau` (phần 01, cạnh câu kết luận) và `doi-moi` (phần 02, cạnh nhận thức qua các đại hội).
-
-## Nộp hai phiên bản
-
-Giảng viên yêu cầu nộp hai link: bản đã thuyết trình và bản đã sửa theo nhận xét. Sau khi thuyết trình, giữ nguyên bản này
-(đánh dấu bằng tag `ban-thuyet-trinh`), rồi tạo bản sao riêng để sửa và nộp. Không sửa trực tiếp trên bản đã thuyết trình.
-
-## Nguồn nội dung
-
-- Giáo trình Chủ nghĩa xã hội khoa học (bản 2021 của nhóm), Chương 3, mục III.
-- Slide bài giảng TS. Ngô Khánh Duy, Chương 3, mục III.
-
-Các ví dụ trong phần "Ví dụ" và "Gợi ý nói" chỉ là gợi ý. Hãy kiểm chứng số liệu và thay bằng ví dụ nhóm đã chọn trước khi thuyết trình.
+Bản có trang Tổng quan, Lý thuyết, Hỏi đáp và game "Chiếc nón quá độ" vẫn nằm trong lịch sử git, commit `c008c9f` (xem bằng `git checkout c008c9f`).
